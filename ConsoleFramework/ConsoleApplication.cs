@@ -1,7 +1,3 @@
-#if !WIN32 && !DOTNETCORE
-#define MONO
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,10 +9,6 @@ using ConsoleFramework.Core;
 using ConsoleFramework.Events;
 using ConsoleFramework.Native;
 using ConsoleFramework.Rendering;
-#if MONO
-using Mono.Unix;
-using Mono.Unix.Native;
-#endif
 using Xaml;
 
 namespace ConsoleFramework;
@@ -226,33 +218,8 @@ namespace ConsoleFramework;
 
         static ConsoleApplication()
         {
-#if DOTNETCORE
             usingLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             isDarwin = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-#else
-            switch (Environment.OSVersion.Platform)
-            {
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                    usingLinux = false;
-                    break;
-                case PlatformID.Unix:
-                    usingLinux = true;
-#if MONO
-                    Utsname uname;
-                    Syscall.uname(out uname);
-                    if (uname.sysname == "Darwin") {
-                        isDarwin = true;
-                    }
-#endif
-                    break;
-                case PlatformID.MacOSX:
-                case PlatformID.Xbox:
-                    throw new NotSupportedException();
-            }
-#endif
         }
 
         private ConsoleApplication()
@@ -492,12 +459,6 @@ namespace ConsoleFramework;
 
             // Terminal initialization sequence
 
-#if MONO
-            // This is magic workaround to avoid messing up terminal after program finish
-            // The bug is described at https://bugzilla.xamarin.com/show_bug.cgi?id=15118
-            bool ignored = Console.KeyAvailable;
-#endif
-
             // Because .NET Core runtime changes locale to something wrong on startup,
             // we have to change it to default system locale
             // See https://stackoverflow.com/a/6249265
@@ -546,28 +507,10 @@ namespace ConsoleFramework;
 
                 try
                 {
-#if MONO
-                    // Catch SIGWINCH to handle terminal resizing
-                    UnixSignal[] signals = new UnixSignal [] {
-                        new UnixSignal (Signum.SIGWINCH)
-                    };
-                    Thread signal_thread = new Thread (delegate () {
-                        while (true) {
-                            // Wait for a signal to be delivered
-                            int index = UnixSignal.WaitAny (signals, -1);
-                            Signum signal = signals [index].Signum;
-                            Libc.writeInt64 (pipeFds[1], 2);
-                        }
-                    }
-                    );
-                    signal_thread.IsBackground = false;
-                    signal_thread.Start ();
-#elif DOTNETCORE
                     Libc.signal(28, arg =>
                     {
                         Libc.writeInt64(pipeFds[1], 2);
                     });
-#endif
                     TermKeyKey key = new TermKeyKey();
                     //
                     this.running = true;
@@ -602,9 +545,6 @@ namespace ConsoleFramework;
                             if (u == 1)
                             {
                                 // Exit from application
-#if MONO
-                                signal_thread.Abort ();
-#endif
                                 break;
                             }
                             if (u == 2)
@@ -1222,4 +1162,5 @@ namespace ConsoleFramework;
         {
             dispose(false);
         }
-    }
+    }
+
