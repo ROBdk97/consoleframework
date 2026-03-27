@@ -6,17 +6,10 @@ using System.Text;
 
 namespace ConsoleFramework.Xaml;
 
-public class MarkupExtensionsParser
+public class MarkupExtensionsParser(IMarkupExtensionsResolver resolver, string text)
 {
-    private readonly IMarkupExtensionsResolver resolver;
-
-    public MarkupExtensionsParser(IMarkupExtensionsResolver resolver, string text)
-    {
-        this.resolver = resolver;
-        this.text = text;
-    }
-
-    private string text;
+    private readonly IMarkupExtensionsResolver resolver = resolver;
+    private string text = text;
     private int index;
 
     private bool hasNextChar()

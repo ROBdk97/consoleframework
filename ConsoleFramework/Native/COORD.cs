@@ -3,16 +3,10 @@ using System.Runtime.InteropServices;
 namespace ConsoleFramework.Native
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct COORD
+    public struct COORD(short X, short Y)
     {
-        public short X;
-        public short Y;
-
-        public COORD(short X, short Y)
-        {
-            this.X = X;
-            this.Y = Y;
-        }
+        public short X = X;
+        public short Y = Y;
     };
 }
 

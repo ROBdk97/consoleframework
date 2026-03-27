@@ -45,7 +45,7 @@ namespace ConsoleFramework.Controls
         }
 
         // All members except 'validity'
-        public bool Equals(LayoutInfo other)
+        public bool Equals(LayoutInfo? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -58,7 +58,7 @@ namespace ConsoleFramework.Controls
                    && other.actualOffset.Equals(actualOffset);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;

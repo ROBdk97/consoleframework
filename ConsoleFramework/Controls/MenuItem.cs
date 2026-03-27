@@ -18,7 +18,7 @@ namespace ConsoleFramework.Controls
         public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click",
             RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(MenuItem));
 
-        public MenuItem ParentItem { get; internal set; }
+        public MenuItem? ParentItem { get; internal set; }
 
         /// <summary>
         /// Call this method if you have changed menu items set
@@ -42,7 +42,7 @@ namespace ConsoleFramework.Controls
         }
 
         private bool _expanded;
-        internal bool expanded
+        internal bool Expanded
         {
             get { return _expanded; }
             private set
@@ -70,8 +70,8 @@ namespace ConsoleFramework.Controls
             }
         }
 
-        private KeyGesture gesture;
-        public KeyGesture Gesture
+        private KeyGesture? gesture;
+        public KeyGesture? Gesture
         {
             get { return gesture; }
             set { gesture = value; }
@@ -88,10 +88,10 @@ namespace ConsoleFramework.Controls
         {
             Focusable = true;
 
-            AddHandler(MouseDownEvent, new MouseEventHandler(onMouseDown));
-            AddHandler(MouseMoveEvent, new MouseEventHandler(onMouseMove));
-            AddHandler(MouseUpEvent, new MouseEventHandler(onMouseUp));
-            AddHandler(KeyDownEvent, new KeyEventHandler(onKeyDown));
+            AddHandler(MouseDownEvent, new MouseEventHandler(OnMouseDown));
+            AddHandler(MouseMoveEvent, new MouseEventHandler(OnMouseMove));
+            AddHandler(MouseUpEvent, new MouseEventHandler(OnMouseUp));
+            AddHandler(KeyDownEvent, new KeyEventHandler(OnKeyDown));
 
             // Stretch by default
             HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -105,30 +105,36 @@ namespace ConsoleFramework.Controls
                             for (int i = 0; i < args.Count; i++)
                             {
                                 MenuItemBase itemBase = items[args.Index + i];
-                                if (itemBase is MenuItem)
+                                if (itemBase is MenuItem menuItem)
                                 {
-                                    (itemBase as MenuItem).ParentItem = this;
+                                    menuItem.ParentItem = this;
                                 }
                             }
                             break;
                         }
                     case ListChangedEventType.ItemsRemoved:
-                        foreach (object removedItem in args.RemovedItems)
+                        if (args.RemovedItems is not null)
                         {
-                            if (removedItem is MenuItem)
-                                (removedItem as MenuItem).ParentItem = null;
+                            foreach (object? removedItem in args.RemovedItems)
+                            {
+                                if (removedItem is MenuItem removedMenuItem)
+                                {
+                                    removedMenuItem.ParentItem = null;
+                                }
+                            }
                         }
                         break;
                     case ListChangedEventType.ItemReplaced:
                         {
-                            object removedItem = args.RemovedItems[0];
-                            if (removedItem is MenuItem)
-                                (removedItem as MenuItem).ParentItem = null;
+                            if (args.RemovedItems is { Count: > 0 } && args.RemovedItems[0] is MenuItem removedMenuItem)
+                            {
+                                removedMenuItem.ParentItem = null;
+                            }
 
                             MenuItemBase itemBase = items[args.Index];
-                            if (itemBase is MenuItem)
+                            if (itemBase is MenuItem menuItem)
                             {
-                                (itemBase as MenuItem).ParentItem = this;
+                                menuItem.ParentItem = this;
                             }
                             break;
                         }
@@ -136,12 +142,12 @@ namespace ConsoleFramework.Controls
             };
         }
 
-        private void onKeyDown(object sender, KeyEventArgs args)
+        private void OnKeyDown(object sender, KeyEventArgs args)
         {
             if (args.wVirtualKeyCode == VirtualKeys.Return)
             {
                 if (Type == MenuItemType.RootSubmenu || Type == MenuItemType.Submenu)
-                    openMenu();
+                    OpenMenu();
                 else if (Type == MenuItemType.Item)
                 {
                     RaiseClick();
@@ -150,7 +156,7 @@ namespace ConsoleFramework.Controls
             }
         }
 
-        private void onMouseUp(object sender, MouseEventArgs args)
+        private void OnMouseUp(object sender, MouseEventArgs args)
         {
             if (Type == MenuItemType.Item)
             {
@@ -159,28 +165,28 @@ namespace ConsoleFramework.Controls
             }
         }
 
-        private void onMouseMove(object sender, MouseEventArgs args)
+        private void OnMouseMove(object sender, MouseEventArgs args)
         {
             // Mouse move opens the submenus only in root level
             if (!disabled && args.LeftButton == MouseButtonState.Pressed /*&& Parent.Parent is Menu*/ )
             {
-                openMenu();
+                OpenMenu();
             }
             args.Handled = true;
         }
 
-        private void onMouseDown(object sender, MouseEventArgs args)
+        private void OnMouseDown(object sender, MouseEventArgs args)
         {
             if (!disabled)
-                openMenu();
+                OpenMenu();
             args.Handled = true;
         }
 
-        private Popup popup;
+        private Popup? popup;
 
-        private void openMenu()
+        private void OpenMenu()
         {
-            if (expanded) return;
+            if (Expanded) return;
 
             if (Type == MenuItemType.Submenu || Type == MenuItemType.RootSubmenu)
             {
@@ -192,27 +198,27 @@ namespace ConsoleFramework.Controls
                         if (itemBase is MenuItem menuItem)
                             menuItem.ParentItem = this;
                     }
-                    popup.AddHandler(Window.ClosedEvent, new EventHandler(onPopupClosed));
+                    popup.AddHandler(Window.ClosedEvent, new EventHandler(OnPopupClosed));
                 }
                 WindowsHost windowsHost = VisualTreeHelper.FindClosestParent<WindowsHost>(this);
                 Point point = TranslatePoint(this, new Point(0, 0), windowsHost);
                 popup.X = point.X;
                 popup.Y = point.Y;
                 windowsHost.ShowModal(popup, true);
-                expanded = true;
+                Expanded = true;
             }
         }
 
-        private void onPopupClosed(object sender, EventArgs eventArgs)
+        private void OnPopupClosed(object? sender, EventArgs eventArgs)
         {
-            assert(expanded);
-            expanded = false;
+            Assert(Expanded);
+            Expanded = false;
         }
 
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
-        private string titleRight;
-        public string TitleRight
+        private string? titleRight;
+        public string? TitleRight
         {
             get
             {
@@ -223,7 +229,7 @@ namespace ConsoleFramework.Controls
             set { titleRight = value; }
         }
 
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public MenuItemType Type { get; set; }
 
@@ -237,7 +243,7 @@ namespace ConsoleFramework.Controls
         protected override Size MeasureOverride(Size availableSize)
         {
             int length = 2;
-            if (!string.IsNullOrEmpty(Title)) length += getTitleLength(Title);
+            if (!string.IsNullOrEmpty(Title)) length += GetTitleLength(Title);
             if (!string.IsNullOrEmpty(TitleRight)) length += TitleRight.Length;
             if (!string.IsNullOrEmpty(Title) && !string.IsNullOrEmpty(TitleRight))
                 length++;
@@ -247,7 +253,7 @@ namespace ConsoleFramework.Controls
         /// <summary>
         /// Counts length of string to be rendered with underscore prefixes on.
         /// </summary>
-        private static int getTitleLength(string title)
+        private static int GetTitleLength(string title)
         {
             bool underscore = false;
             int len = 0;
@@ -277,7 +283,7 @@ namespace ConsoleFramework.Controls
         {
             Attr captionAttrs;
             Attr specialAttrs;
-            if (HasFocus || expanded)
+            if (HasFocus || Expanded)
             {
                 captionAttrs = Colors.Blend(Color.White, Color.DarkCyan);
                 specialAttrs = Colors.Blend(Color.Yellow, Color.DarkCyan);
@@ -293,7 +299,7 @@ namespace ConsoleFramework.Controls
             buffer.FillRectangle(0, 0, ActualWidth, ActualHeight, ' ', captionAttrs);
             if (null != Title)
             {
-                renderString(Title, buffer, 1, 0, ActualWidth, captionAttrs,
+                RenderString(Title, buffer, 1, 0, ActualWidth, captionAttrs,
                     Disabled ? captionAttrs : specialAttrs);
             }
             if (null != TitleRight)
@@ -306,7 +312,7 @@ namespace ConsoleFramework.Controls
         /// symbol will use specialAttrs instead. To render underscore pass two underscores.
         /// Example: "_File" renders File when 'F' is rendered using specialAttrs.
         /// </summary>
-        private static int renderString(string s, RenderingBuffer buffer,
+        private static int RenderString(string s, RenderingBuffer buffer,
                                          int x, int y, int maxWidth, Attr attr,
                                          Attr specialAttr)
         {
@@ -403,7 +409,7 @@ namespace ConsoleFramework.Controls
                     }
                 }));
 
-                EventManager.AddHandler(panel, PreviewMouseMoveEvent, new MouseEventHandler(onPanelMouseMove));
+                EventManager.AddHandler(panel, PreviewMouseMoveEvent, new MouseEventHandler(OnPanelMouseMove));
             }
 
             protected override void OnPreviewKeyDown(object sender, KeyEventArgs args)
@@ -445,7 +451,7 @@ namespace ConsoleFramework.Controls
                 }
             }
 
-            private void onPanelMouseMove(object sender, MouseEventArgs e)
+            private void OnPanelMouseMove(object sender, MouseEventArgs e)
             {
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
@@ -453,7 +459,7 @@ namespace ConsoleFramework.Controls
                 }
             }
 
-            protected override void initialize()
+            protected override void Initialize()
             {
                 AddHandler(PreviewKeyDownEvent, new KeyEventHandler(OnPreviewKeyDown), true);
             }
@@ -537,17 +543,17 @@ namespace ConsoleFramework.Controls
 
         internal void Close()
         {
-            assert(expanded);
+            Assert(Expanded);
             popup.Close();
         }
 
         internal void Expand()
         {
-            openMenu();
+            OpenMenu();
         }
 
-        private ICommand command;
-        public ICommand Command
+        private ICommand? command;
+        public ICommand? Command
         {
             get
             {
@@ -557,21 +563,21 @@ namespace ConsoleFramework.Controls
             {
                 if (command != value)
                 {
-                    command?.CanExecuteChanged -= onCommandCanExecuteChanged;
+                    command?.CanExecuteChanged -= OnCommandCanExecuteChanged;
                     command = value;
-                    command.CanExecuteChanged += onCommandCanExecuteChanged;
+                    command?.CanExecuteChanged += OnCommandCanExecuteChanged;
 
-                    refreshCanExecute();
+                    RefreshCanExecute();
                 }
             }
         }
 
-        private void onCommandCanExecuteChanged(object sender, EventArgs args)
+        private void OnCommandCanExecuteChanged(object? sender, EventArgs args)
         {
-            refreshCanExecute();
+            RefreshCanExecute();
         }
 
-        private void refreshCanExecute()
+        private void RefreshCanExecute()
         {
             if (command == null)
             {
@@ -582,7 +588,7 @@ namespace ConsoleFramework.Controls
             Disabled = !command.CanExecute(CommandParameter);
         }
 
-        public object CommandParameter
+        public object? CommandParameter
         {
             get;
             set;

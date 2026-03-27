@@ -19,11 +19,11 @@ public class TreeView : Control
         get { return items; }
     }
 
-    public IItemsSource ItemsSource { get; set; }
+    public IItemsSource? ItemsSource { get; set; }
 
     private readonly ListBox listBox;
 
-    public TreeItem SelectedItem
+    public TreeItem? SelectedItem
     {
         get
         {
@@ -53,7 +53,7 @@ public class TreeView : Control
             if (!args.Handled)
             {
                 if (listBox.SelectedItemIndex.HasValue)
-                    expandCollapse(treeItemsFlat[listBox.SelectedItemIndex.Value]);
+                    ExpandCollapse(treeItemsFlat[listBox.SelectedItemIndex.Value]);
             }
         }), true);
 
@@ -63,29 +63,33 @@ public class TreeView : Control
         };
     }
 
-    private void subscribeToItem(TreeItem item, ListChangedHandler handler)
+    private void SubscribeToItem(TreeItem item, ListChangedHandler handler)
     {
         item.items.ListChanged += handler;
-        item.PropertyChanged += itemOnPropertyChanged;
+        item.PropertyChanged += ItemOnPropertyChanged;
         foreach (TreeItem child in item.items)
         {
-            subscribeToItem(child, handler);
+            SubscribeToItem(child, handler);
         }
     }
 
-    private void unsubscribeFromItem(TreeItem item, ListChangedHandler handler)
+    private void UnsubscribeFromItem(TreeItem item, ListChangedHandler handler)
     {
         item.items.ListChanged -= handler;
-        item.PropertyChanged -= itemOnPropertyChanged;
+        item.PropertyChanged -= ItemOnPropertyChanged;
         foreach (TreeItem child in item.items)
         {
-            unsubscribeFromItem(child, handler);
+            UnsubscribeFromItem(child, handler);
         }
     }
 
-    private void itemOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+    private void ItemOnPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
-        TreeItem senderItem = (TreeItem)sender;
+        if (sender is not TreeItem senderItem)
+        {
+            return;
+        }
+
         if (args.PropertyName == "DisplayTitle")
         {
             if (senderItem.Position >= 0)
@@ -108,30 +112,30 @@ public class TreeView : Control
             if (senderItem.Position >= 0)
             {
                 if (senderItem.Expanded)
-                    expand(senderItem);
+                    Expand(senderItem);
                 else
-                    collapse(senderItem);
+                    Collapse(senderItem);
             }
         }
     }
 
-    private void ensureFlatListIsCorrect()
+    private void EnsureFlatListIsCorrect()
     {
         for (int i = 0; i < treeItemsFlat.Count; i++)
         {
-            assert(treeItemsFlat[i].Position == i);
+            Assert(treeItemsFlat[i].Position == i);
         }
     }
 
     /// <summary>
     /// Maintains the correct order of items in flat list.
     /// </summary>
-    private void onItemInserted(int pos)
+    private void OnItemInserted(int pos)
     {
         TreeItem treeItem = items[pos];
-        TreeItem prevItem = null;
+        TreeItem? prevItem = null;
         if (pos > 0)
-            prevItem = items[pos];
+            prevItem = items[pos - 1];
         treeItem.Position = prevItem != null ? prevItem.Position + 1 : items.Count - 1;
         for (int j = treeItem.Position; j < treeItemsFlat.Count; j++)
         {
@@ -143,50 +147,58 @@ public class TreeView : Control
             listBox.DisabledItemsIndexes.Add(treeItem.Position);
 
         // Handle modification of inner list recursively
-        subscribeToItem(treeItem, ItemsOnListChanged);
+        SubscribeToItem(treeItem, ItemsOnListChanged);
         if (treeItem.Position <= listBox.SelectedItemIndex)
             RaisePropertyChanged(nameof(SelectedItem));
 
-        ensureFlatListIsCorrect();
+        EnsureFlatListIsCorrect();
     }
 
-    private void onItemRemoved(TreeItem treeItem)
+    private void OnItemRemoved(TreeItem treeItem)
     {
-        if (treeItem.Expanded) collapse(treeItem);
+        if (treeItem.Expanded) Collapse(treeItem);
         treeItemsFlat.RemoveAt(treeItem.Position);
         listBox.Items.RemoveAt(treeItem.Position);
         for (int j = treeItem.Position; j < treeItemsFlat.Count; j++)
             treeItemsFlat[j].Position--;
 
         // Cleanup event handler recursively
-        unsubscribeFromItem(treeItem, ItemsOnListChanged);
+        UnsubscribeFromItem(treeItem, ItemsOnListChanged);
 
         if (listBox.SelectedItemIndex >= treeItem.Position)
             RaisePropertyChanged(nameof(SelectedItem));
 
-        ensureFlatListIsCorrect();
+        EnsureFlatListIsCorrect();
     }
 
-    private void ItemsOnListChanged(object sender, Binding.Observables.ListChangedEventArgs args)
+    private void ItemsOnListChanged(object? sender, Binding.Observables.ListChangedEventArgs args)
     {
         switch (args.Type)
         {
             case ListChangedEventType.ItemsInserted:
                 {
                     for (int i = 0; i < args.Count; i++)
-                        onItemInserted(i + args.Index);
+                        OnItemInserted(i + args.Index);
                     break;
                 }
             case ListChangedEventType.ItemsRemoved:
                 {
-                    foreach (TreeItem treeItem in args.RemovedItems.Cast<TreeItem>())
-                        onItemRemoved(treeItem);
+                    if (args.RemovedItems is null)
+                    {
+                        break;
+                    }
+
+                    foreach (TreeItem treeItem in args.RemovedItems.OfType<TreeItem>())
+                        OnItemRemoved(treeItem);
                     break;
                 }
             case ListChangedEventType.ItemReplaced:
                 {
-                    onItemRemoved((TreeItem)args.RemovedItems[0]);
-                    onItemInserted(args.Index);
+                    if (args.RemovedItems is { Count: > 0 } && args.RemovedItems[0] is TreeItem removedItem)
+                    {
+                        OnItemRemoved(removedItem);
+                    }
+                    OnItemInserted(args.Index);
                     break;
                 }
         }
@@ -197,7 +209,7 @@ public class TreeView : Control
     /// </summary>
     private readonly List<TreeItem> treeItemsFlat = [];
 
-    private void expand(TreeItem item)
+    private void Expand(TreeItem item)
     {
         int index = treeItemsFlat.IndexOf(item);
         for (int i = 0; i < item.Items.Count; i++)
@@ -219,18 +231,18 @@ public class TreeView : Control
         // Children are expanded too according to their Expanded stored state
         foreach (TreeItem child in item.Items.Where(child => child.Expanded))
         {
-            expand(child);
+            Expand(child);
         }
 
-        ensureFlatListIsCorrect();
+        EnsureFlatListIsCorrect();
     }
 
-    private void collapse(TreeItem item)
+    private void Collapse(TreeItem item)
     {
         // Children are collapsed but with Expanded state saved
         foreach (TreeItem child in item.Items.Where(child => child.Expanded))
         {
-            collapse(child);
+            Collapse(child);
         }
 
         int index = treeItemsFlat.IndexOf(item);
@@ -246,22 +258,22 @@ public class TreeView : Control
             treeItemsFlat[k].Position -= item.Items.Count;
         }
 
-        ensureFlatListIsCorrect();
+        EnsureFlatListIsCorrect();
     }
 
-    private void expandCollapse(TreeItem item)
+    private void ExpandCollapse(TreeItem item)
     {
         int index = treeItemsFlat.IndexOf(item);
         if (item.Expanded)
         {
-            collapse(item);
+            Collapse(item);
             item.expanded = false;
             // Need to update item string (because Expanded status has been changed)
             listBox.Items[index] = item.DisplayTitle;
         }
         else
         {
-            expand(item);
+            Expand(item);
             item.expanded = true;
             // Need to update item string (because Expanded status has been changed)
             listBox.Items[index] = item.DisplayTitle;

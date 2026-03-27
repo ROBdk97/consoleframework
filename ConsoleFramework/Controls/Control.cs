@@ -234,21 +234,21 @@ public partial class Control : INotifyPropertyChanged
     {
     }
 
-    private void attachedToRootElement()
+    private void AttachedToRootElement()
     {
         attachedToVisualTree = true;
         foreach (Control child in Children)
         {
-            child.attachedToRootElement();
+            child.AttachedToRootElement();
         }
     }
 
-    private void detachedFromRootElement()
+    private void DetachedFromRootElement()
     {
         attachedToVisualTree = false;
         foreach (Control child in Children)
         {
-            child.detachedFromRootElement();
+            child.DetachedFromRootElement();
         }
     }
 
@@ -258,24 +258,24 @@ public partial class Control : INotifyPropertyChanged
     /// </summary>
     internal void ControlSetAsRootElement()
     {
-        attachedToRootElement();
+        AttachedToRootElement();
     }
 
     internal void ControlUnsetAsRootElement()
     {
-        detachedFromRootElement();
+        DetachedFromRootElement();
     }
 
-    private void parentChanged()
+    private void ParentChanged()
     {
         if (Parent == null)
         {
-            detachedFromRootElement();
+            DetachedFromRootElement();
         }
         else
         {
-            if (Parent.attachedToVisualTree) attachedToRootElement();
-            else detachedFromRootElement();
+            if (Parent.attachedToVisualTree) AttachedToRootElement();
+            else DetachedFromRootElement();
         }
 
         OnParentChanged();
@@ -290,7 +290,7 @@ public partial class Control : INotifyPropertyChanged
             throw new ArgumentException("Specified child already has parent.");
         children.Insert(index, child);
         child.Parent = this;
-        child.parentChanged();
+        child.ParentChanged();
         child.Invalidate();
         Invalidate();
     }
@@ -302,7 +302,7 @@ public partial class Control : INotifyPropertyChanged
             throw new ArgumentException("Specified child already has parent.");
         children.Add(child);
         child.Parent = this;
-        child.parentChanged();
+        child.ParentChanged();
         child.Invalidate();
         Invalidate();
     }
@@ -322,7 +322,7 @@ public partial class Control : INotifyPropertyChanged
             // Remove it from invalidation queue if already added
             ConsoleApplication.Instance.Renderer.ControlRemovedFromTree(child);
 
-            child.parentChanged();
+            child.ParentChanged();
 
             Invalidate();
         }
@@ -513,7 +513,7 @@ public partial class Control : INotifyPropertyChanged
         private set => layoutInfo.desiredSize = value;
     }
 
-    private struct MinMax
+    private readonly struct MinMax
     {
         /// <summary>
         /// Defines the effective constraints for the current MinHeight/MaxHeight, MinWidth/MaxWidth
@@ -566,17 +566,17 @@ public partial class Control : INotifyPropertyChanged
     {
         if (a == int.MaxValue || a == int.MinValue)
         {
-            assert(b != MinusWithInf(a));
+            Assert(b != MinusWithInf(a));
             return a;
         }
         if (b == int.MaxValue || b == int.MinValue)
         {
-            assert(a != MinusWithInf(b));
+            Assert(a != MinusWithInf(b));
             return a;
         }
         int result = a + b;
         // Check case when sum transforms into one of the "special" values
-        assert(result != int.MinValue && result != int.MaxValue);
+        Assert(result != int.MinValue && result != int.MaxValue);
         return result;
     }
 
@@ -597,7 +597,7 @@ public partial class Control : INotifyPropertyChanged
             default:
                 int result = -v;
                 // Check case when -v transforms into one of the "special" values
-                assert(result != int.MinValue && result != int.MaxValue);
+                Assert(result != int.MinValue && result != int.MaxValue);
                 return result;
         }
     }
@@ -762,7 +762,7 @@ public partial class Control : INotifyPropertyChanged
         {
             RenderSlotRect = Rect.Empty;
             RenderSize = Size.Empty;
-            layoutInfo.layoutClip = calculateLayoutClip();
+            layoutInfo.layoutClip = CalculateLayoutClip();
             layoutInfo.validity = LayoutValidity.MeasureAndArrange;
             return;
         }
@@ -825,7 +825,7 @@ public partial class Control : INotifyPropertyChanged
         //it returned from its own ArrangeOverride 
         RenderSize = ArrangeOverride(arrangeSize);
 
-        Vector offset = computeAlignmentOffset();
+        Vector offset = ComputeAlignmentOffset();
 
         offset.X += finalRect.X + margin.Left;
         offset.Y += finalRect.Y + margin.Top;
@@ -835,7 +835,7 @@ public partial class Control : INotifyPropertyChanged
             ActualOffset = offset;
         }
 
-        layoutInfo.layoutClip = calculateLayoutClip();
+        layoutInfo.layoutClip = CalculateLayoutClip();
 
         layoutInfo.validity = LayoutValidity.MeasureAndArrange;
     }
@@ -873,15 +873,15 @@ public partial class Control : INotifyPropertyChanged
         private set => layoutInfo.renderSlotRect = value;
     }
 
-    private Rect calculateLayoutClip()
+    private Rect CalculateLayoutClip()
     {
-        Vector offset = computeAlignmentOffset();
-        Size clientSize = getClientSize();
+        Vector offset = ComputeAlignmentOffset();
+        Size clientSize = GetClientSize();
         var layoutClip = new Rect(-offset.X, -offset.Y, clientSize.Width, clientSize.Height);
-        return applyMaxConstraints(layoutClip);
+        return ApplyMaxConstraints(layoutClip);
     }
 
-    internal Rect applyMaxConstraints(Rect layoutClip)
+    internal Rect ApplyMaxConstraints(Rect layoutClip)
     {
         // If MaxWidth/Height constraints are specified, then from the visible part of layoutClip
         // we keep in the TopLeft corner only what fits in Max. TopLeft is chosen because
@@ -902,7 +902,7 @@ public partial class Control : INotifyPropertyChanged
     /// </summary>
     public Rect LayoutClip => layoutInfo.layoutClip;
 
-    private Vector computeAlignmentOffset()
+    private Vector ComputeAlignmentOffset()
     {
         //
         MinMax mm = new(MinHeight, MaxHeight, MinWidth, MaxWidth, Width, Height);
@@ -916,16 +916,16 @@ public partial class Control : INotifyPropertyChanged
         //are clipped by container we also degrade to Top-Left, so we are consistent. 
         Size clippedInkSize = new(Math.Min(renderSize.Width, mm.maxWidth),
                                        Math.Min(renderSize.Height, mm.maxHeight));
-        Size clientSize = getClientSize();
+        Size clientSize = GetClientSize();
 
-        return computeAlignmentOffsetCore(clientSize, clippedInkSize);
+        return ComputeAlignmentOffsetCore(clientSize, clippedInkSize);
     }
 
     // The client size is the size of layout slot decreased by margins. 
     // This is the "window" through which we see the content of the child.
     // Alignments position ink of the child in this "window".
     // Max with 0 is neccessary because layout slot may be smaller then unclipped desired size.
-    private Size getClientSize()
+    private Size GetClientSize()
     {
         Thickness margin = Margin;
         int marginWidth = margin.Left + margin.Right;
@@ -937,7 +937,7 @@ public partial class Control : INotifyPropertyChanged
                         Math.Max(0, renderSlotRect.Height - marginHeight));
     }
 
-    internal Vector computeAlignmentOffsetCore(Size clientSize, Size inkSize)
+    internal Vector ComputeAlignmentOffsetCore(Size clientSize, Size inkSize)
     {
         Vector offset = new();
 
@@ -1392,14 +1392,14 @@ public partial class Control : INotifyPropertyChanged
         return Math.Min(s.Length, maxWidth);
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void RaisePropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    protected static void assert(bool assertion)
+    protected static void Assert(bool assertion)
     {
         if (!assertion) throw new InvalidOperationException("Assertion failed.");
     }

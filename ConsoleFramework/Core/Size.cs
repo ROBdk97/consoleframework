@@ -26,7 +26,7 @@ public struct Size
         return (size1.Width.Equals(size2.Width) && size1.Height.Equals(size2.Height));
     }
 
-    public override bool Equals(object o)
+    public override readonly bool Equals(object? o)
     {
         if ((o == null) || o is not Size)
         {
@@ -36,7 +36,7 @@ public struct Size
         return Equals(this, size);
     }
 
-    public bool Equals(Size value)
+    public readonly bool Equals(Size value)
     {
         return Equals(this, value);
     }
@@ -64,7 +64,7 @@ public struct Size
 
     public static Size Empty => CreateEmptySize();
 
-    public bool IsEmpty => width <= 0;
+    public readonly bool IsEmpty => width <= 0;
 
     public int Width
     {
@@ -121,4 +121,4 @@ public struct Size
     {
         return $"Size: {Width};{Height}";
     }
-}
+}

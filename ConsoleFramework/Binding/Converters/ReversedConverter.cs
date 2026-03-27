@@ -2,11 +2,9 @@
 
 namespace ConsoleFramework.Binding.Converters;
 
-public class ReversedConverter : IBindingConverter
+public class ReversedConverter(IBindingConverter converter) : IBindingConverter
 {
-    private readonly IBindingConverter converter;
-
-    public ReversedConverter(IBindingConverter converter) => this.converter = converter;
+    private readonly IBindingConverter converter = converter;
 
     public Type FirstType => converter.SecondType;
     public Type SecondType => converter.FirstType;

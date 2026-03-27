@@ -83,16 +83,10 @@ public sealed class Renderer
         LayoutRevalidated
     }
 
-    private struct ControlAffectInfo
+    private struct ControlAffectInfo(Control control, Renderer.AffectType affectType)
     {
-        public readonly Control control;
-        public readonly AffectType affectType;
-
-        public ControlAffectInfo(Control control, AffectType affectType)
-        {
-            this.control = control;
-            this.affectType = affectType;
-        }
+        public readonly Control control = control;
+        public readonly AffectType affectType = affectType;
     }
 
     /// <summary>

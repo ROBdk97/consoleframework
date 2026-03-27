@@ -19,7 +19,7 @@ public class Window : Control
     public static RoutedEvent ClosedEvent = EventManager.RegisterRoutedEvent("Closed", RoutingStrategy.Direct, typeof(EventHandler), typeof(Window));
     public static RoutedEvent ClosingEvent = EventManager.RegisterRoutedEvent("Closing", RoutingStrategy.Direct, typeof(CancelEventHandler), typeof(Window));
 
-    public string ChildToFocus
+    public string? ChildToFocus
     {
         get; set;
     }
@@ -28,10 +28,10 @@ public class Window : Control
     {
         IsFocusScope = true;
         AddHandler(PreviewMouseDownEvent, new MouseButtonEventHandler(Window_OnPreviewMouseDown));
-        initialize();
+        Initialize();
     }
 
-    protected virtual void initialize()
+    protected virtual void Initialize()
     {
         AddHandler(MouseDownEvent, new MouseButtonEventHandler(Window_OnMouseDown));
         AddHandler(MouseUpEvent, new MouseButtonEventHandler(Window_OnMouseUp));
@@ -81,7 +81,7 @@ public class Window : Control
         }
     }
 
-    private string title;
+    private string title = string.Empty;
     public string Title
     {
         get
@@ -99,11 +99,11 @@ public class Window : Control
         }
     }
 
-    private ColorPair activeBorderColors;
+    private ColorPair? activeBorderColors;
     /// <summary>
     /// Special colors for active window. Not set by default.
     /// </summary>
-    public ColorPair ActiveBorderColors
+    public ColorPair? ActiveBorderColors
     {
         get => activeBorderColors;
         set
@@ -116,12 +116,12 @@ public class Window : Control
         }
     }
 
-    protected WindowsHost getWindowsHost()
+    protected WindowsHost GetWindowsHost()
     {
         return (WindowsHost)Parent;
     }
 
-    public static Size EMPTY_WINDOW_SIZE = new(12, 3);
+    public readonly static Size EMPTY_WINDOW_SIZE = new(12, 3);
 
     protected override Size MeasureOverride(Size availableSize)
     {
@@ -186,7 +186,7 @@ public class Window : Control
 
     public bool IsActiveWindow()
     {
-        return getWindowsHost().TopWindow == this;
+        return GetWindowsHost().TopWindow == this;
     }
 
     public override void Render(RenderingBuffer buffer)
@@ -280,7 +280,7 @@ public class Window : Control
         if (!moving && !resizing && !closing)
         {
             Point point = args.GetPosition(this);
-            Point parentPoint = args.GetPosition(getWindowsHost());
+            Point parentPoint = args.GetPosition(GetWindowsHost());
             if (point.y == 0 && point.x == 3)
             {
                 closing = true;
@@ -328,7 +328,7 @@ public class Window : Control
 
         if (!args.Cancel)
         {
-            getWindowsHost().CloseWindow(this);
+            GetWindowsHost().CloseWindow(this);
         }
     }
 
@@ -391,7 +391,7 @@ public class Window : Control
         }
         if (moving)
         {
-            Point parentPoint = args.GetPosition(getWindowsHost());
+            Point parentPoint = args.GetPosition(GetWindowsHost());
             Vector vector = new(parentPoint.X - movingStartPoint.x, parentPoint.Y - movingStartPoint.y);
             int newX = movingStartX + vector.X;
             int newY = movingStartY + vector.Y;
@@ -400,14 +400,14 @@ public class Window : Control
             {
                 X = newX;
                 Y = newY;
-                getWindowsHost().Invalidate();
+                GetWindowsHost().Invalidate();
             }
 
             args.Handled = true;
         }
         if (resizing)
         {
-            Point parentPoint = args.GetPosition(getWindowsHost());
+            Point parentPoint = args.GetPosition(GetWindowsHost());
             int deltaWidth = parentPoint.X - resizingStartPoint.x;
             int deltaHeight = parentPoint.Y - resizingStartPoint.y;
             int width = resizingStartWidth + deltaWidth;
@@ -429,12 +429,12 @@ public class Window : Control
         }
     }
 
-    public void Window_OnActivated(object sender, EventArgs args)
+    public void Window_OnActivated(object? sender, EventArgs args)
     {
         Invalidate();
     }
 
-    public void Window_OnDeactivated(object sender, EventArgs args)
+    public void Window_OnDeactivated(object? sender, EventArgs args)
     {
         Invalidate();
     }

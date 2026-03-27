@@ -92,7 +92,7 @@ public class ComboBox : Control
             // todo : cleanup event handlers after popup closing
         }
 
-        private void initListBoxScrollingPos()
+        private void InitListBoxScrollingPos()
         {
             int itemIndex = listbox.SelectedItemIndex ?? 0;
             int firstVisibleItemIndex = scrollViewer.DeltaY;
@@ -108,7 +108,7 @@ public class ComboBox : Control
             }
         }
 
-        protected override void initialize()
+        protected override void Initialize()
         {
             AddHandler(ActivatedEvent, new EventHandler(OnActivated));
             AddHandler(KeyDownEvent, new KeyEventHandler(OnKeyDown), true);
@@ -123,7 +123,7 @@ public class ComboBox : Control
             else base.OnPreviewKeyDown(sender, args);
         }
 
-        private void OnActivated(object sender, EventArgs eventArgs)
+        private void OnActivated(object? sender, EventArgs eventArgs)
         {
         }
 
@@ -185,7 +185,7 @@ public class ComboBox : Control
                 // When initializing we need to correctly assign offsets to ScrollViewer for
                 // currently selected item. Because ScrollViewer depends of ActualWidth / ActualHeight
                 // of Content, we need to do this after arrangement has finished.
-                initListBoxScrollingPos();
+                InitListBoxScrollingPos();
             }
             return finalSize;
         }
@@ -196,7 +196,7 @@ public class ComboBox : Control
         }
     }
 
-    private bool opened
+    private bool Opened
     {
         get
         {
@@ -211,9 +211,9 @@ public class ComboBox : Control
 
     public int? ShownItemsCount { get; set; }
 
-    private void openPopup()
+    private void OpenPopup()
     {
-        if (opened) throw new InvalidOperationException("Assertion failed.");
+        if (Opened) throw new InvalidOperationException("Assertion failed.");
         Window popup = new PopupWindow(Items, SelectedItemIndex ?? 0, shadow,
             ShownItemsCount != null ? ShownItemsCount.Value - 1 : (int?)null);
         Point popupCoord = TranslatePoint(this, new Point(0, 0),
@@ -227,7 +227,7 @@ public class ComboBox : Control
         else popup.Height = shadow ? 3 : 2;
         WindowsHost windowsHost = VisualTreeHelper.FindClosestParent<WindowsHost>(this);
         windowsHost.ShowModal(popup, true);
-        opened = true;
+        Opened = true;
         EventManager.AddHandler(popup, Window.ClosedEvent, new EventHandler(OnPopupClosed));
     }
 
@@ -235,22 +235,28 @@ public class ComboBox : Control
     {
         if (args.wVirtualKeyCode == VirtualKeys.Return)
         {
-            openPopup();
+            OpenPopup();
         }
     }
 
     private void OnMouseDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
     {
-        if (!opened)
-            openPopup();
+        if (!Opened)
+            OpenPopup();
     }
 
-    private void OnPopupClosed(object o, EventArgs args)
+    private void OnPopupClosed(object? sender, EventArgs args)
     {
-        if (!opened) throw new InvalidOperationException("Assertion failed.");
-        opened = false;
-        SelectedItemIndex = ((PopupWindow)o).IndexSelected;
-        EventManager.RemoveHandler(o, Window.ClosedEvent, new EventHandler(OnPopupClosed));
+        if (!Opened) throw new InvalidOperationException("Assertion failed.");
+        Opened = false;
+
+        if (sender is not PopupWindow popupWindow)
+        {
+            throw new InvalidOperationException("Unexpected popup sender.");
+        }
+
+        SelectedItemIndex = popupWindow.IndexSelected;
+        EventManager.RemoveHandler(popupWindow, Window.ClosedEvent, new EventHandler(OnPopupClosed));
     }
 
     private readonly List<string> items = [];
@@ -301,7 +307,7 @@ public class ComboBox : Control
         buffer.FillRectangle(1 + usedForCurrentItem, 0, ActualWidth - (usedForCurrentItem + 1), 1, ' ', attrs);
         if (ActualWidth > 2)
         {
-            buffer.SetPixel(ActualWidth - 2, 0, opened ? UnicodeTable.ArrowUp : UnicodeTable.ArrowDown, attrs);
+            buffer.SetPixel(ActualWidth - 2, 0, Opened ? UnicodeTable.ArrowUp : UnicodeTable.ArrowDown, attrs);
         }
     }
 }

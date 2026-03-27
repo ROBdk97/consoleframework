@@ -37,12 +37,12 @@ public class ContextMenu
     {
         List<MenuItem> expandedSubmenus = [];
         MenuItem currentItem = (MenuItem)Items.SingleOrDefault(
-            item => item is MenuItem item1 && item1.expanded);
+            item => item is MenuItem item1 && item1.Expanded);
         while (null != currentItem)
         {
             expandedSubmenus.Add(currentItem);
             currentItem = (MenuItem)currentItem.Items.SingleOrDefault(
-                item => item is MenuItem menuItem && menuItem.expanded);
+                item => item is MenuItem menuItem && menuItem.Expanded);
         }
         expandedSubmenus.Reverse();
         foreach (MenuItem expandedSubmenu in expandedSubmenus)

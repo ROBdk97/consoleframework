@@ -18,7 +18,7 @@ public class Menu : Control
         get { return items; }
     }
 
-    private static void getGestures(MenuItem item, Dictionary<KeyGesture, MenuItem> map)
+    private static void GetGestures(MenuItem item, Dictionary<KeyGesture, MenuItem> map)
     {
         if (item.Gesture != null)
             map.Add(item.Gesture, item);
@@ -29,7 +29,7 @@ public class Menu : Control
             {
                 if (itemBase is MenuItem menueItem)
                 {
-                    getGestures(menueItem, map);
+                    GetGestures(menueItem, map);
                 }
             }
         }
@@ -40,9 +40,9 @@ public class Menu : Control
         gestures = null;
     }
 
-    private Dictionary<KeyGesture, MenuItem> gestures;
+    private Dictionary<KeyGesture, MenuItem>? gestures;
 
-    private Dictionary<KeyGesture, MenuItem> getGesturesMap()
+    private Dictionary<KeyGesture, MenuItem> GetGesturesMap()
     {
         if (gestures == null)
         {
@@ -51,7 +51,7 @@ public class Menu : Control
             {
                 if (itemBase is MenuItem item)
                 {
-                    getGestures(item, gestures);
+                    GetGestures(item, gestures);
                 }
             }
         }
@@ -60,7 +60,7 @@ public class Menu : Control
 
     public bool TryMatchGesture(KeyEventArgs args)
     {
-        Dictionary<KeyGesture, MenuItem> map = getGesturesMap();
+        Dictionary<KeyGesture, MenuItem> map = GetGesturesMap();
         KeyGesture match = map.Keys.FirstOrDefault(gesture => gesture.Matches(args));
         if (match == null) return false;
 
@@ -69,7 +69,7 @@ public class Menu : Control
         // Activate matches menu item
         MenuItem menuItem = map[match];
         List<MenuItem> path = [];
-        MenuItem currentItem = menuItem;
+        MenuItem? currentItem = menuItem;
         while (currentItem != null)
         {
             path.Add(currentItem);
@@ -79,7 +79,7 @@ public class Menu : Control
 
         // Open all menu items in path successively
         int i = 0;
-        Action action = null;
+        Action? action = null;
         action = new Action(() =>
         {
             if (i < path.Count)
@@ -103,14 +103,14 @@ public class Menu : Control
                         item.Parent.Parent, item);
                 }
                 item.Invalidate();
-                void handler(object o, EventArgs eventArgs)
+                void handler(object? o, EventArgs eventArgs)
                 {
                     item.Expand();
                     item.LayoutRevalidated -= handler;
                     i++;
                     if (i < path.Count)
                     {
-                        action();
+                        action?.Invoke();
                     }
                 }
 
@@ -128,13 +128,13 @@ public class Menu : Control
     public void CloseAllSubmenus()
     {
         List<MenuItem> expandedSubmenus = [];
-        MenuItem currentItem = (MenuItem)Items.SingleOrDefault(
-            item => item is MenuItem menuItem && menuItem.expanded);
-        while (null != currentItem)
+        MenuItem? currentItem = Items.SingleOrDefault(
+            item => item is MenuItem menuItem && menuItem.Expanded) as MenuItem;
+        while (currentItem != null)
         {
             expandedSubmenus.Add(currentItem);
-            currentItem = (MenuItem)currentItem.Items.SingleOrDefault(
-                item => item is MenuItem menuItem && menuItem.expanded);
+            currentItem = currentItem.Items.SingleOrDefault(
+                item => item is MenuItem menuItem && menuItem.Expanded) as MenuItem;
         }
         expandedSubmenus.Reverse();
         foreach (MenuItem expandedSubmenu in expandedSubmenus)
@@ -187,16 +187,16 @@ public class Menu : Control
         };
         IsFocusScope = true;
 
-        AddHandler(KeyDownEvent, new KeyEventHandler(onKeyDown));
-        AddHandler(PreviewMouseMoveEvent, new MouseEventHandler(onPreviewMouseMove));
-        AddHandler(PreviewMouseDownEvent, new MouseEventHandler(onPreviewMouseDown));
+        AddHandler(KeyDownEvent, new KeyEventHandler(OnKeyDown));
+        AddHandler(PreviewMouseMoveEvent, new MouseEventHandler(OnPreviewMouseMove));
+        AddHandler(PreviewMouseDownEvent, new MouseEventHandler(OnPreviewMouseDown));
     }
 
     protected override void OnParentChanged()
     {
         if (Parent != null)
         {
-            assert(Parent is WindowsHost);
+            Assert(Parent is WindowsHost);
 
             // Attach to WindowsHost a handler for the MenuItem.ClickEvent event,
             // to catch the moment of menu item selection in one of the modal popup windows.
@@ -218,27 +218,27 @@ public class Menu : Control
                         ConsoleApplication.Instance.FocusManager.MoveFocusNext();
                     else if (args.wVirtualKeyCode == VirtualKeys.Left)
                         ConsoleApplication.Instance.FocusManager.MoveFocusPrev();
-                    MenuItem focusedItem = (MenuItem)Items.SingleOrDefault(
-                        item => item is MenuItem && item.HasFocus);
-                    focusedItem.Expand();
+                    MenuItem? focusedItem = Items.SingleOrDefault(
+                        item => item is MenuItem && item.HasFocus) as MenuItem;
+                    focusedItem?.Expand();
                 }));
         }
     }
 
-    private void onPreviewMouseMove(object sender, MouseEventArgs args)
+    private void OnPreviewMouseMove(object sender, MouseEventArgs args)
     {
         if (args.LeftButton == MouseButtonState.Pressed)
         {
-            onPreviewMouseDown(sender, args);
+            OnPreviewMouseDown(sender, args);
         }
     }
 
-    private void onPreviewMouseDown(object sender, MouseEventArgs e)
+    private void OnPreviewMouseDown(object sender, MouseEventArgs e)
     {
         PassFocusToChildUnderPoint(e);
     }
 
-    private void onKeyDown(object sender, KeyEventArgs args)
+    private void OnKeyDown(object sender, KeyEventArgs args)
     {
         if (args.wVirtualKeyCode == VirtualKeys.Right)
         {

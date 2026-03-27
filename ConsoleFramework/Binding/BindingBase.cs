@@ -179,11 +179,11 @@ public class BindingBase
                         // Subscribe
                         if (sourceList != null)
                         {
-                            ((IObservableList)sourceList).ListChanged -= sourceListChanged;
+                            ((IObservableList)sourceList).ListChanged -= SourceListChanged;
                         }
                         sourceList = (IList)sourceValue;
                         targetList = targetListNow;
-                        ((IObservableList)sourceList).ListChanged += sourceListChanged;
+                        ((IObservableList)sourceList).ListChanged += SourceListChanged;
                     }
                     else
                     {
@@ -245,7 +245,7 @@ public class BindingBase
         }
     }
 
-    private void sourceListChanged(object sender, Observables.ListChangedEventArgs args)
+    private void SourceListChanged(object sender, Observables.ListChangedEventArgs args)
     {
         // To avoid side effects from old listeners
         // (can be reproduced if call raisePropertyChanged inside another ObservableList handler)
@@ -264,7 +264,7 @@ public class BindingBase
         }
     }
 
-    private void targetListChanged(object sender, Observables.ListChangedEventArgs args)
+    private void TargetListChanged(object sender, Observables.ListChangedEventArgs args)
     {
         // To avoid side effects from old listeners
         // (can be reproduced if call raisePropertyChanged inside another ObservableList handler)
@@ -321,11 +321,11 @@ public class BindingBase
                         // Subscribe
                         if (targetList != null)
                         {
-                            ((IObservableList)targetList).ListChanged -= targetListChanged;
+                            ((IObservableList)targetList).ListChanged -= TargetListChanged;
                         }
                         targetList = (IList)targetValue;
                         sourceList = sourceListNow;
-                        ((IObservableList)targetList).ListChanged += targetListChanged;
+                        ((IObservableList)targetList).ListChanged += TargetListChanged;
                     }
                     else
                     {
@@ -587,12 +587,12 @@ public class BindingBase
 
         if (sourceList != null && sourceIsObservable)
         {
-            ((IObservableList)sourceList).ListChanged -= sourceListChanged;
+            ((IObservableList)sourceList).ListChanged -= SourceListChanged;
             sourceList = null;
         }
         if (targetList != null && targetIsObservable)
         {
-            ((IObservableList)targetList).ListChanged -= targetListChanged;
+            ((IObservableList)targetList).ListChanged -= TargetListChanged;
             targetList = null;
         }
     }

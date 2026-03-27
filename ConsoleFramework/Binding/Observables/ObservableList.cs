@@ -7,14 +7,9 @@ namespace ConsoleFramework.Binding.Observables;
 /// <summary>
 /// Non-generic <see cref="IObservableList"/> implementation.
 /// </summary>
-public class ObservableList : IObservableList, IList
+public class ObservableList(IList list) : IObservableList, IList
 {
-    private readonly IList list;
-
-    public ObservableList(IList list)
-    {
-        this.list = list;
-    }
+    private readonly IList list = list;
 
     public IEnumerator GetEnumerator()
     {
@@ -26,25 +21,25 @@ public class ObservableList : IObservableList, IList
         return GetEnumerator();
     }
 
-    public int Add(object item)
+    public int Add(object? item)
     {
         int index = list.Count;
         list.Add(item);
 
-        raiseListElementsAdded(index, 1);
+        RaiseListElementsAdded(index, 1);
         return index;
     }
 
     public void Clear()
     {
         int count = list.Count;
-        List<object> removedItems = [.. list];
+        List<object?> removedItems = [.. list];
         list.Clear();
 
-        raiseListElementsRemoved(0, count, removedItems);
+        RaiseListElementsRemoved(0, count, removedItems);
     }
 
-    public bool Contains(object item)
+    public bool Contains(object? item)
     {
         return list.Contains(item);
     }
@@ -54,12 +49,12 @@ public class ObservableList : IObservableList, IList
         list.CopyTo(array, arrayIndex);
     }
 
-    public void Remove(object item)
+    public void Remove(object? item)
     {
         int index = list.IndexOf(item);
         list.Remove(item);
         if (-1 != index)
-            raiseListElementsRemoved(index, 1, [item]);
+            RaiseListElementsRemoved(index, 1, [item]);
     }
 
     public void CopyTo(Array array, int index)
@@ -107,25 +102,25 @@ public class ObservableList : IObservableList, IList
         }
     }
 
-    public int IndexOf(object item)
+    public int IndexOf(object? item)
     {
         return list.IndexOf(item);
     }
 
-    public void Insert(int index, object item)
+    public void Insert(int index, object? item)
     {
         list.Insert(index, item);
-        raiseListElementsAdded(index, 1);
+        RaiseListElementsAdded(index, 1);
     }
 
     public void RemoveAt(int index)
     {
-        object removedItem = list[index];
+        object? removedItem = list[index];
         list.RemoveAt(index);
-        raiseListElementsRemoved(index, 1, [removedItem]);
+        RaiseListElementsRemoved(index, 1, [removedItem]);
     }
 
-    public object this[int index]
+    public object? this[int index]
     {
         get
         {
@@ -133,26 +128,26 @@ public class ObservableList : IObservableList, IList
         }
         set
         {
-            object removedItem = list[index];
+            object? removedItem = list[index];
             list[index] = value;
-            raiseListElementReplaced(index, [removedItem]);
+            RaiseListElementReplaced(index, [removedItem]);
         }
     }
 
-    private void raiseListElementsAdded(int index, int length)
+    private void RaiseListElementsAdded(int index, int length)
     {
         ListChanged?.Invoke(this, new ListChangedEventArgs(ListChangedEventType.ItemsInserted, index, length, null));
     }
 
-    private void raiseListElementsRemoved(int index, int length, List<object> removedItems)
+    private void RaiseListElementsRemoved(int index, int length, List<object?> removedItems)
     {
         ListChanged?.Invoke(this, new ListChangedEventArgs(ListChangedEventType.ItemsRemoved, index, length, removedItems));
     }
 
-    private void raiseListElementReplaced(int index, List<object> removedItems)
+    private void RaiseListElementReplaced(int index, List<object?> removedItems)
     {
         ListChanged?.Invoke(this, new ListChangedEventArgs(ListChangedEventType.ItemReplaced, index, 1, removedItems));
     }
 
-    public event ListChangedHandler ListChanged;
-}
+    public event ListChangedHandler? ListChanged;
+}

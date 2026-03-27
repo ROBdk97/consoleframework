@@ -245,16 +245,10 @@ public sealed class ConsoleApplication : IDisposable
     private readonly EventWaitHandle invokeWaitHandle;
     private int? mainThreadId;
 
-    private struct ActionInfo
+    private struct ActionInfo(Action action, EventWaitHandle waitHandle)
     {
-        public readonly Action action;
-        public readonly EventWaitHandle waitHandle;
-
-        public ActionInfo(Action action, EventWaitHandle waitHandle)
-        {
-            this.action = action;
-            this.waitHandle = waitHandle;
-        }
+        public readonly Action action = action;
+        public readonly EventWaitHandle waitHandle = waitHandle;
     }
 
     private readonly List<ActionInfo> actionsToBeInvoked = [];

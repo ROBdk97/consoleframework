@@ -115,15 +115,15 @@ public abstract class ButtonBase : Control, ICommandSource
     }
 
     private ICommand? command;
-    public ICommand Command
+    public ICommand? Command
     {
-        get => command!;
+        get => command;
         set
         {
             if (command == value) return;
             command?.CanExecuteChanged -= OnCommandCanExecuteChanged;
             command = value;
-            command.CanExecuteChanged += OnCommandCanExecuteChanged;
+            command?.CanExecuteChanged += OnCommandCanExecuteChanged;
             RefreshCanExecute();
         }
     }

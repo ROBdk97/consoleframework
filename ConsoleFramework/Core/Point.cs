@@ -2,10 +2,10 @@
 
 namespace ConsoleFramework.Core;
 
-public struct Point
+public struct Point(int x, int y)
 {
-    internal int x;
-    internal int y;
+    internal int x = x;
+    internal int y = y;
 
     public static bool operator ==(Point point1, Point point2) =>
         point1.X == point2.X && point1.Y == point2.Y;
@@ -24,12 +24,6 @@ public struct Point
 
     public int X { get => x; set => x = value; }
     public int Y { get => y; set => y = value; }
-
-    public Point(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
 
     public void Offset(int offsetX, int offsetY)
     {

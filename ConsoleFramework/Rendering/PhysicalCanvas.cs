@@ -62,17 +62,11 @@ public class PhysicalCanvas
     /// <summary>
     /// Flyweight to provide [][]-style access to buffer.
     /// </summary>
-    public sealed class NestedIndexer
+    public sealed class NestedIndexer(int x, PhysicalCanvas canvas)
     {
-        private readonly int x;
-        private readonly PhysicalCanvas canvas;
+        private readonly int x = x;
+        private readonly PhysicalCanvas canvas = canvas;
         private readonly Dictionary<int, CHAR_INFO_ref> references = [];
-
-        public NestedIndexer(int x, PhysicalCanvas canvas)
-        {
-            this.x = x;
-            this.canvas = canvas;
-        }
 
         public CHAR_INFO_ref this[int index]
         {
@@ -96,18 +90,11 @@ public class PhysicalCanvas
         /// Wrapper to provide reference-style access to struct properties (assignment and change
         /// without temporary copying in user code).
         /// </summary>
-        public sealed class CHAR_INFO_ref
+        public sealed class CHAR_INFO_ref(int x, int y, PhysicalCanvas canvas)
         {
-            private readonly int x;
-            private readonly int y;
-            private readonly PhysicalCanvas canvas;
-
-            public CHAR_INFO_ref(int x, int y, PhysicalCanvas canvas)
-            {
-                this.x = x;
-                this.y = y;
-                this.canvas = canvas;
-            }
+            private readonly int x = x;
+            private readonly int y = y;
+            private readonly PhysicalCanvas canvas = canvas;
 
             public char UnicodeChar
             {
