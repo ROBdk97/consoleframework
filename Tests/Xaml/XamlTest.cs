@@ -10,15 +10,10 @@ namespace Tests.Xaml;
 
 public class XamlTest
 {
-    public class XamlObject
+    public class XamlObject(int x)
     {
-        private readonly int x;
+        private readonly int x = x;
         public int X { get { return x; } }
-
-        public XamlObject(int x)
-        {
-            this.x = x;
-        }
 
         public string StrProp { get; set; }
 

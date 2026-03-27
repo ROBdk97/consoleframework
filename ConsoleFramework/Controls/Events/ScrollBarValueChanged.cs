@@ -2,11 +2,8 @@ using ConsoleFramework.Events;
 
 namespace ConsoleFramework.Controls.Events
 {
-    public class ScrollBarValueChanged : RoutedEventArgs
+    public class ScrollBarValueChanged(object source, RoutedEvent routedEvent) : RoutedEventArgs(source, routedEvent)
     {
-        public ScrollBarValueChanged(object source, RoutedEvent routedEvent) : base(source, routedEvent)
-        {
-        }
     }
 }
 

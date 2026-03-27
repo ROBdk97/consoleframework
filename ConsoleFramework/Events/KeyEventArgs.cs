@@ -2,10 +2,8 @@ using ConsoleFramework.Native;
 
 namespace ConsoleFramework.Events;
 
-public class KeyEventArgs : RoutedEventArgs
+public class KeyEventArgs(object source, RoutedEvent routedEvent) : RoutedEventArgs(source, routedEvent)
 {
-    public KeyEventArgs(object source, RoutedEvent routedEvent) : base(source, routedEvent) { }
-
     public bool bKeyDown;
     public ushort wRepeatCount;
     public VirtualKeys wVirtualKeyCode;

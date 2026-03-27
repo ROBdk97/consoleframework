@@ -16,16 +16,10 @@ public sealed class EventManager
 {
     private readonly Stack<Control> inputCaptureStack = new();
 
-    private class DelegateInfo
+    private class DelegateInfo(Delegate @delegate, bool handledEventsToo)
     {
-        public readonly Delegate @delegate;
-        public readonly bool handledEventsToo;
-
-        public DelegateInfo(Delegate @delegate, bool handledEventsToo)
-        {
-            this.@delegate = @delegate;
-            this.handledEventsToo = handledEventsToo;
-        }
+        public readonly Delegate @delegate = @delegate;
+        public readonly bool handledEventsToo = handledEventsToo;
     }
 
     private class RoutedEventTargetInfo

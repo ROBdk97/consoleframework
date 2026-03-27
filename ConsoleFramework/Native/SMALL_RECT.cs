@@ -3,20 +3,12 @@ using System.Runtime.InteropServices;
 namespace ConsoleFramework.Native
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct SMALL_RECT
+    public struct SMALL_RECT(short left, short top, short right, short bottom)
     {
-        public short Left;
-        public short Top;
-        public short Right;
-        public short Bottom;
-
-        public SMALL_RECT(short left, short top, short right, short bottom)
-        {
-            Left = left;
-            Top = top;
-            Right = right;
-            Bottom = bottom;
-        }
+        public short Left = left;
+        public short Top = top;
+        public short Right = right;
+        public short Bottom = bottom;
     }
 }
 

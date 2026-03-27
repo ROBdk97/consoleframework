@@ -3,19 +3,11 @@ using System.Collections.Generic;
 
 namespace ConsoleFramework.Binding.Observables
 {
-    public class ListChangedEventArgs : EventArgs
+    public class ListChangedEventArgs(ListChangedEventType type, int index, int count, List<object?>? removedItems) : EventArgs
     {
-        public ListChangedEventType Type { get; }
-        public int Index { get; }
-        public int Count { get; }
-        public List<object> RemovedItems { get; }
-
-        public ListChangedEventArgs(ListChangedEventType type, int index, int count, List<object> removedItems)
-        {
-            Type = type;
-            Index = index;
-            Count = count;
-            RemovedItems = removedItems;
-        }
+        public ListChangedEventType Type { get; } = type;
+        public int Index { get; } = index;
+        public int Count { get; } = count;
+        public List<object?>? RemovedItems { get; } = removedItems;
     }
 }

@@ -2,22 +2,16 @@
 
 namespace ConsoleFramework.Core;
 
-public struct Vector
+public struct Vector(int x, int y)
 {
-    internal int x;
-    internal int y;
+    internal int x = x;
+    internal int y = y;
 
     public int X { get => x; set => x = value; }
     public int Y { get => y; set => y = value; }
 
     public double Length => Math.Sqrt(x * x + y * y);
     public double LengthSquared => x * x + y * y;
-
-    public Vector(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
 
     public static bool operator ==(Vector v1, Vector v2) => v1.X == v2.X && v1.Y == v2.Y;
     public static bool operator !=(Vector v1, Vector v2) => !(v1 == v2);

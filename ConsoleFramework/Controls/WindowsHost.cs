@@ -53,7 +53,7 @@ public class WindowsHost : Control
         int windowsStartIndex = 0;
         if (mainMenu != null)
         {
-            assert(Children[0] == mainMenu);
+            Assert(Children[0] == mainMenu);
             windowsStartIndex++;
         }
         if (windowsStartIndex < Children.Count)
@@ -83,7 +83,7 @@ public class WindowsHost : Control
         int windowsStartIndex = 0;
         if (mainMenu != null)
         {
-            assert(Children[0] == mainMenu);
+            Assert(Children[0] == mainMenu);
             mainMenu.Measure(new Size(availableSize.Width, 1));
             windowsStartIndex++;
         }
@@ -105,7 +105,7 @@ public class WindowsHost : Control
         int windowsStartIndex = 0;
         if (mainMenu != null)
         {
-            assert(Children[0] == mainMenu);
+            Assert(Children[0] == mainMenu);
             mainMenu.Arrange(new Rect(0, 0, finalSize.Width, 1));
             windowsStartIndex++;
         }
@@ -177,7 +177,7 @@ public class WindowsHost : Control
         int windowsStartIndex = 0;
         if (mainMenu != null)
         {
-            assert(Children[0] == mainMenu);
+            Assert(Children[0] == mainMenu);
             windowsStartIndex++;
         }
 
@@ -267,7 +267,7 @@ public class WindowsHost : Control
 
     private void activateMenu()
     {
-        assert(mainMenu != null);
+        Assert(mainMenu != null);
         if (ConsoleApplication.Instance.FocusManager.CurrentScope != mainMenu)
             ConsoleApplication.Instance.FocusManager.SetFocusScope(mainMenu);
     }
@@ -278,16 +278,10 @@ public class WindowsHost : Control
         // todo : add window.ChildToFocus support again
     }
 
-    private class WindowInfo
+    private class WindowInfo(bool modal, bool outsideClickClosesWindow)
     {
-        public readonly bool Modal;
-        public readonly bool OutsideClickClosesWindow;
-
-        public WindowInfo(bool modal, bool outsideClickClosesWindow)
-        {
-            Modal = modal;
-            OutsideClickClosesWindow = outsideClickClosesWindow;
-        }
+        public readonly bool Modal = modal;
+        public readonly bool OutsideClickClosesWindow = outsideClickClosesWindow;
     }
 
     private readonly Dictionary<Window, WindowInfo> windowInfos = [];
@@ -314,7 +308,7 @@ public class WindowsHost : Control
         int windowsStartIndex = 0;
         if (mainMenu != null)
         {
-            assert(Children[0] == mainMenu);
+            Assert(Children[0] == mainMenu);
             windowsStartIndex++;
         }
         if (Children.Count > windowsStartIndex)
@@ -354,7 +348,7 @@ public class WindowsHost : Control
         int windowsStartIndex = 0;
         if (mainMenu != null)
         {
-            assert(Children[0] == mainMenu);
+            Assert(Children[0] == mainMenu);
             windowsStartIndex++;
         }
 

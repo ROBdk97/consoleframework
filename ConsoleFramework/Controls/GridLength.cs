@@ -7,16 +7,10 @@ namespace ConsoleFramework.Controls
     /// Represents the length of elements that explicitly support Star unit types.
     /// </summary>
     [TypeConverter(typeof(GridLengthTypeConverter))]
-    public struct GridLength
+    public struct GridLength(GridUnitType unitType, int value)
     {
-        private readonly GridUnitType gridUnitType;
-        private readonly int value;
-
-        public GridLength(GridUnitType unitType, int value)
-        {
-            gridUnitType = unitType;
-            this.value = value;
-        }
+        private readonly GridUnitType gridUnitType = unitType;
+        private readonly int value = value;
 
         public GridUnitType GridUnitType
         {

@@ -6,5 +6,5 @@
 /// </summary>
 public interface IObservableList
 {
-    event ListChangedHandler ListChanged;
+    event ListChangedHandler? ListChanged;
 }

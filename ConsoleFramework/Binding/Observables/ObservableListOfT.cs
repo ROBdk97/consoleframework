@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleFramework.Binding.Observables;
 
@@ -10,14 +11,9 @@ namespace ConsoleFramework.Binding.Observables;
 /// Collection&lt;T&gt; and List&lt;T&gt;.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ObservableList<T> : IObservableList, IList<T>, IList
+public class ObservableList<T>(IList<T> list) : IObservableList, IList<T>, IList
 {
-    private readonly IList<T> list;
-
-    public ObservableList(IList<T> list)
-    {
-        this.list = list;
-    }
+    private readonly IList<T> list = list;
 
     public IEnumerator<T> GetEnumerator()
     {
@@ -33,43 +29,48 @@ public class ObservableList<T> : IObservableList, IList<T>, IList
     {
         int index = list.Count;
         list.Add(item);
-        raiseListElementsAdded(index, 1);
+        RaiseListElementsAdded(index, 1);
     }
 
-    int IList.Add(object value)
+    int IList.Add(object? value)
     {
+        VerifyValueType(value);
         int count = Count;
-        Add((T)value);
+        Add((T)value!);
         return count;
     }
 
-    bool IList.Contains(object value)
+    bool IList.Contains(object? value)
     {
-        return Contains((T)value);
+        return IsCompatibleObject(value) && Contains((T)value!);
     }
 
     public void Clear()
     {
         int count = list.Count;
-        List<object> removedItems = [.. list];
+        List<object?> removedItems = [.. list.Cast<object?>()];
         list.Clear();
 
-        raiseListElementsRemoved(0, count, removedItems);
+        RaiseListElementsRemoved(0, count, removedItems);
     }
 
-    int IList.IndexOf(object value)
+    int IList.IndexOf(object? value)
     {
-        return IndexOf((T)value);
+        return IsCompatibleObject(value) ? IndexOf((T)value!) : -1;
     }
 
-    void IList.Insert(int index, object value)
+    void IList.Insert(int index, object? value)
     {
-        Insert(index, (T)value);
+        VerifyValueType(value);
+        Insert(index, (T)value!);
     }
 
-    void IList.Remove(object value)
+    void IList.Remove(object? value)
     {
-        Remove((T)value);
+        if (IsCompatibleObject(value))
+        {
+            Remove((T)value!);
+        }
     }
 
     public bool Contains(T item)
@@ -88,7 +89,7 @@ public class ObservableList<T> : IObservableList, IList<T>, IList
         list.Remove(item);
         if (-1 != index)
         {
-            raiseListElementsRemoved(index, 1, [item]);
+            RaiseListElementsRemoved(index, 1, [item]);
             return true;
         }
         return false;
@@ -129,20 +130,24 @@ public class ObservableList<T> : IObservableList, IList<T>, IList
     public void Insert(int index, T item)
     {
         list.Insert(index, item);
-        raiseListElementsAdded(index, 1);
+        RaiseListElementsAdded(index, 1);
     }
 
     public void RemoveAt(int index)
     {
         T removedItem = list[index];
         list.RemoveAt(index);
-        raiseListElementsRemoved(index, 1, [removedItem]);
+        RaiseListElementsRemoved(index, 1, [removedItem]);
     }
 
-    object IList.this[int index]
+    object? IList.this[int index]
     {
         get { return this[index]; }
-        set { this[index] = (T)value; }
+        set
+        {
+            VerifyValueType(value);
+            this[index] = (T)value!;
+        }
     }
 
     public T this[int index]
@@ -155,24 +160,42 @@ public class ObservableList<T> : IObservableList, IList<T>, IList
         {
             T removedItem = list[index];
             list[index] = value;
-            raiseListElementReplaced(index, [removedItem]);
+            RaiseListElementReplaced(index, [removedItem]);
         }
     }
 
-    private void raiseListElementsAdded(int index, int length)
+    private void RaiseListElementsAdded(int index, int length)
     {
         ListChanged?.Invoke(this, new ListChangedEventArgs(ListChangedEventType.ItemsInserted, index, length, null));
     }
 
-    private void raiseListElementsRemoved(int index, int length, List<object> removedItems)
+    private void RaiseListElementsRemoved(int index, int length, List<object?> removedItems)
     {
         ListChanged?.Invoke(this, new ListChangedEventArgs(ListChangedEventType.ItemsRemoved, index, length, removedItems));
     }
 
-    private void raiseListElementReplaced(int index, List<object> removedItems)
+    private void RaiseListElementReplaced(int index, List<object?> removedItems)
     {
         ListChanged?.Invoke(this, new ListChangedEventArgs(ListChangedEventType.ItemReplaced, index, 1, removedItems));
     }
 
-    public event ListChangedHandler ListChanged;
-}
+    private static bool IsCompatibleObject(object? value)
+    {
+        if (value is T)
+        {
+            return true;
+        }
+
+        return value is null && default(T) is null;
+    }
+
+    private static void VerifyValueType(object? value)
+    {
+        if (!IsCompatibleObject(value))
+        {
+            throw new ArgumentException($"Value must be assignable to {typeof(T).FullName}.", nameof(value));
+        }
+    }
+
+    public event ListChangedHandler? ListChanged;
+}

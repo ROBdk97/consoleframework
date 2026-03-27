@@ -164,14 +164,9 @@ namespace ConsoleFramework.Controls
             return textPos;
         }
 
-        public class AppendStringCmd : ICommand
+        public class AppendStringCmd(string s) : ICommand
         {
-            private readonly string s;
-
-            public AppendStringCmd(string s)
-            {
-                this.s = s;
-            }
+            private readonly string s = s;
 
             public bool Do(TextEditorController controller)
             {
@@ -417,14 +412,9 @@ namespace ConsoleFramework.Controls
         /// Command accepts coord from mouse and applies it to current text window,
         /// don't allowing to set cursor out of filled text
         /// </summary>
-        public class TrySetCursorCmd : ICommand
+        public class TrySetCursorCmd(Point coord) : ICommand
         {
-            private readonly Point coord;
-
-            public TrySetCursorCmd(Point coord)
-            {
-                this.coord = coord;
-            }
+            private readonly Point coord = coord;
 
             public bool Do(TextEditorController controller)
             {
@@ -502,14 +492,9 @@ namespace ConsoleFramework.Controls
             }
         }
 
-        public class MoveCursorCmd : ICommand
+        public class MoveCursorCmd(TextEditorController.Direction direction) : ICommand
         {
-            private readonly Direction direction;
-
-            public MoveCursorCmd(Direction direction)
-            {
-                this.direction = direction;
-            }
+            private readonly Direction direction = direction;
 
             public bool Do(TextEditorController controller)
             {

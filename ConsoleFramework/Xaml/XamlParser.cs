@@ -81,14 +81,9 @@ public class XamlParser
         public string id;
     }
 
-    private class MarkupExtensionsResolver : IMarkupExtensionsResolver
+    private class MarkupExtensionsResolver(XamlParser self) : IMarkupExtensionsResolver
     {
-        private readonly XamlParser self;
-
-        public MarkupExtensionsResolver(XamlParser self)
-        {
-            this.self = self;
-        }
+        private readonly XamlParser self = self;
 
         public Type Resolve(string name)
         {
@@ -125,16 +120,17 @@ public class XamlParser
         public IEnumerable<string> Ids;
     }
 
-    private class MarkupExtensionContext : IMarkupExtensionContext
+    private class MarkupExtensionContext(XamlParser self, string expression, string propertyName,
+                                  object obj, object dataContext) : IMarkupExtensionContext
     {
-        public string PropertyName { get; }
-        public object Object { get; }
+        public string PropertyName { get; } = propertyName;
+        public object Object { get; } = obj;
 
-        public object DataContext { get; }
+        public object DataContext { get; } = dataContext;
 
         //
-        private readonly XamlParser self;
-        private readonly string expression;
+        private readonly XamlParser self = self;
+        private readonly string expression = expression;
 
         public object GetObjectById(string id)
         {
@@ -161,16 +157,6 @@ public class XamlParser
                 DataContext = DataContext,
                 Ids = ids
             };
-        }
-
-        public MarkupExtensionContext(XamlParser self, string expression, string propertyName,
-                                      object obj, object dataContext)
-        {
-            this.self = self;
-            this.expression = expression;
-            PropertyName = propertyName;
-            Object = obj;
-            DataContext = dataContext;
         }
     }
 

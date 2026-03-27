@@ -7,8 +7,7 @@ namespace ConsoleFramework.Xaml;
 /// If no attribute found at type, "DataContext" property will be used.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = true)]
-public class DataContextPropertyAttribute : Attribute
+public class DataContextPropertyAttribute(string name) : Attribute
 {
-    public DataContextPropertyAttribute(string name) => Name = name;
-    public string Name { get; }
+    public string Name { get; } = name;
 }

@@ -14,14 +14,17 @@ namespace ConsoleFramework.Events
 
         public RoutedEventKey(string name, Type ownerType)
         {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(ownerType);
+
             this.name = name;
             this.ownerType = ownerType;
         }
 
-        public bool Equals(RoutedEventKey other) =>
+        public bool Equals(RoutedEventKey? other) =>
             other is not null && Equals(other.name, name) && Equals(other.ownerType, ownerType);
 
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             obj is RoutedEventKey key && Equals(key);
 
         public override int GetHashCode() => HashCode.Combine(name, ownerType);

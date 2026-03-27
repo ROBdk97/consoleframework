@@ -28,7 +28,7 @@ namespace ConsoleFramework.Controls
         }
 
         // todo : call listBox.Invalidate() if item is visible now
-        private string title;
+        private string title = string.Empty;
         public string Title
         {
             get
@@ -40,8 +40,8 @@ namespace ConsoleFramework.Controls
                 if (title != value)
                 {
                     title = value;
-                    raisePropertyChanged(nameof(Title));
-                    raisePropertyChanged(nameof(DisplayTitle));
+                    RaisePropertyChanged(nameof(Title));
+                    RaisePropertyChanged(nameof(DisplayTitle));
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace ConsoleFramework.Controls
                 if (disabled != value)
                 {
                     disabled = value;
-                    raisePropertyChanged(nameof(Disabled));
+                    RaisePropertyChanged(nameof(Disabled));
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace ConsoleFramework.Controls
             get { return items.Count != 0; }
         }
 
-        public IItemsSource ItemsSource { get; set; }
+        public IItemsSource? ItemsSource { get; set; }
 
         internal bool expanded;
         public bool Expanded
@@ -83,15 +83,15 @@ namespace ConsoleFramework.Controls
                 if (expanded != value)
                 {
                     expanded = value;
-                    raisePropertyChanged(nameof(Expanded));
-                    raisePropertyChanged(nameof(DisplayTitle));
+                    RaisePropertyChanged(nameof(Expanded));
+                    RaisePropertyChanged(nameof(DisplayTitle));
                 }
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void raisePropertyChanged(string propertyName)
+        protected virtual void RaisePropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

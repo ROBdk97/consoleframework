@@ -8,8 +8,7 @@ namespace ConsoleFramework.Xaml;
 /// If no attribute found at type, "Content" property will be used.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = true)]
-public class ContentPropertyAttribute : Attribute
+public class ContentPropertyAttribute(string name) : Attribute
 {
-    public ContentPropertyAttribute(string name) => Name = name;
-    public string Name { get; set; }
+    public string Name { get; set; } = name;
 }
