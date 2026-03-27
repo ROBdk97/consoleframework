@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="DebugMono" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="ConsoleFramework/ConsoleFramework.csproj">
+    <BuildType Solution="DebugMono|*" Project="Debug" />
+  </Project>
+  <Project Path="ExamplesStandalone/ManyControls/ManyControls.csproj">
+    <BuildType Solution="DebugMono|*" Project="Debug" />
+  </Project>
+  <Project Path="ExamplesStandalone/TextEditor/TextEditor.csproj">
+    <BuildType Solution="DebugMono|*" Project="Debug" />
+  </Project>
+  <Project Path="Tests/Tests.csproj">
+    <BuildType Solution="DebugMono|*" Project="Debug" />
+  </Project>
+</Solution>
