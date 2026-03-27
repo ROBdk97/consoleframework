@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);DOTNETCORE</DefineConstants>
     <DebugType>portable</DebugType>
     <AssemblyName>ConsoleFramework</AssemblyName>
     <PackageId>Elwood.ConsoleFramework</PackageId>
