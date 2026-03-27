@@ -1,366 +1,394 @@
-﻿using System;
+using ConsoleFramework.Controls;
+using ConsoleFramework.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ConsoleFramework.Controls;
-using ConsoleFramework.Core;
 
-namespace ConsoleFramework.Events
+namespace ConsoleFramework.Events;
+
+/// <summary>
+/// Responsible to manage elements that has a keyboard focus.
+/// Also maintains the console mouse cursor visibility according to
+/// current focused control.
+/// </summary>
+public sealed class FocusManager
 {
+    private readonly EventManager eventManager;
+
+    public FocusManager(EventManager eventManager)
+    {
+        ArgumentNullException.ThrowIfNull(eventManager);
+        this.eventManager = eventManager;
+    }
+
     /// <summary>
-    /// Responsible to manage elements that has a keyboard focus.
-    /// Also maintains the console mouse cursor visibility according to
-    /// current focused control.
+    /// Refreshes the display of mouse cursor according to current focused element
+    /// and its cursor visibility status.
+    /// 
+    /// Called after layout update (if there were any changes),
+    /// as well as when FocusedElement changes or when the local cursor state changes
+    /// on the control element that currently holds keyboard focus.
     /// </summary>
-    public sealed class FocusManager {
-        private readonly EventManager eventManager;
-
-        public FocusManager(EventManager eventManager) {
-            if (null == eventManager)
-                throw new ArgumentNullException("eventManager");
-            this.eventManager = eventManager;
-        }
-
-        /// <summary>
-        /// Refreshes the display of mouse cursor according to current focused element
-        /// and its cursor visibility status.
-        /// 
-        /// Вызывается после обновления лайаута (если были какие-то изменения),
-        /// а также при смене FocusedElement либо при изменении локального состояния курсора
-        /// на элементе уплавления, который сейчас удерживает фокус клавиатурного ввода.
-        /// </summary>
-        internal void RefreshMouseCursor() {
-            if (null != focusedElement && focusedElement.CursorVisible && focusedElement.IsPointVisible(focusedElement.CursorPosition)) {
-                ConsoleApplication.Instance.SetCursorPosition(Control.TranslatePoint(focusedElement, focusedElement.CursorPosition, null));
-                if (!ConsoleApplication.Instance.CursorIsVisible) {
-                    ConsoleApplication.Instance.ShowCursor();
-                }
-            } else {
-                if (ConsoleApplication.Instance.CursorIsVisible) {
-                    ConsoleApplication.Instance.HideCursor();
-                }
-            }
-        }
-
-        private Control focusedElement;
-
-        /// <summary>
-        /// Control that has a keyboard focus now.
-        /// </summary>
-        public Control FocusedElement {
-            get {
-                return focusedElement;
-            }
-            private set {
-                if (focusedElement != value) {
-                    focusedElement = value;
-                    RefreshMouseCursor();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Забирает фокус у текущего фокусного элемента и устанавливает фокус указанному элементу управления.
-        /// Если focusedControl - null, то FocusedElement будет установлен в null и более клавиатурный
-        /// ввод не будет обрабатываться до тех пор, пока фокус не будет отдан другому контролу.
-        /// </summary>
-        /// <param name="focusedControl"></param>
-        /// <param name="ignorePreviewHandled"></param>
-        /// <returns></returns>
-        private bool tryChangeFocusedElementTo(Control focusedControl, bool ignorePreviewHandled = false) {
-            if (focusedControl == FocusedElement) {
-                return true; // do nothing
-            }
-            //
-            Control oldFocus = FocusedElement;
-            // генерируем Preview-события
-            // если Handled = true хотя бы для одного из Preview-событий, то метод возвращает false
-            // и фокус не меняется, а состояние Focused для измененных элементов визуального дерева
-            // возвращается как было
-            if (oldFocus != null) {
-                KeyboardFocusChangedEventArgs previewLostArgs = new KeyboardFocusChangedEventArgs(oldFocus,
-                    Control.PreviewLostKeyboardFocusEvent, oldFocus, focusedControl);
-                if (eventManager.ProcessRoutedEvent(previewLostArgs.RoutedEvent, previewLostArgs) && !ignorePreviewHandled) {
-                    return false;
-                }
-            }
-            if (null != focusedControl)
+    internal void RefreshMouseCursor()
+    {
+        if (null != focusedElement && focusedElement.CursorVisible && focusedElement.IsPointVisible(focusedElement.CursorPosition))
+        {
+            ConsoleApplication.Instance.SetCursorPosition(Control.TranslatePoint(focusedElement, focusedElement.CursorPosition, null));
+            if (!ConsoleApplication.Instance.CursorIsVisible)
             {
-                KeyboardFocusChangedEventArgs previewGotArgs = new KeyboardFocusChangedEventArgs(focusedControl,
-                        Control.PreviewGotKeyboardFocusEvent, oldFocus, focusedControl);
-                if (eventManager.ProcessRoutedEvent(previewGotArgs.RoutedEvent, previewGotArgs) && !ignorePreviewHandled)
+                ConsoleApplication.Instance.ShowCursor();
+            }
+        }
+        else
+        {
+            if (ConsoleApplication.Instance.CursorIsVisible)
+            {
+                ConsoleApplication.Instance.HideCursor();
+            }
+        }
+    }
+
+    private Control focusedElement;
+
+    /// <summary>
+    /// Control that has a keyboard focus now.
+    /// </summary>
+    public Control FocusedElement
+    {
+        get
+        {
+            return focusedElement;
+        }
+        private set
+        {
+            if (focusedElement != value)
+            {
+                focusedElement = value;
+                RefreshMouseCursor();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Takes focus away from the current focused element and sets focus to the specified control.
+    /// If focusedControl is null, then FocusedElement will be set to null and keyboard
+    /// input will not be processed until focus is given to another control.
+    /// </summary>
+    /// <param name="focusedControl"></param>
+    /// <param name="ignorePreviewHandled"></param>
+    /// <returns></returns>
+    private bool tryChangeFocusedElementTo(Control focusedControl, bool ignorePreviewHandled = false)
+    {
+        if (focusedControl == FocusedElement)
+        {
+            return true; // do nothing
+        }
+        //
+        Control oldFocus = FocusedElement;
+        // Generate Preview-events
+        // If Handled = true for at least one of the Preview-events, the method returns false
+        // and focus does not change, and the Focused state for changed elements of the visual tree
+        // returns as it was
+        if (oldFocus != null)
+        {
+            KeyboardFocusChangedEventArgs previewLostArgs = new(oldFocus,
+                Control.PreviewLostKeyboardFocusEvent, oldFocus, focusedControl);
+            if (eventManager.ProcessRoutedEvent(previewLostArgs.RoutedEvent, previewLostArgs) && !ignorePreviewHandled)
+            {
+                return false;
+            }
+        }
+        if (null != focusedControl)
+        {
+            KeyboardFocusChangedEventArgs previewGotArgs = new(focusedControl,
+                    Control.PreviewGotKeyboardFocusEvent, oldFocus, focusedControl);
+            if (eventManager.ProcessRoutedEvent(previewGotArgs.RoutedEvent, previewGotArgs) && !ignorePreviewHandled)
+            {
+                return false;
+            }
+        }
+
+        // Change the focused element and generate main events
+        FocusedElement = focusedControl;
+
+        if (oldFocus != null)
+        {
+            KeyboardFocusChangedEventArgs lostArgs = new(oldFocus,
+                Control.LostKeyboardFocusEvent, oldFocus, focusedControl);
+            eventManager.ProcessRoutedEvent(lostArgs.RoutedEvent, lostArgs);
+        }
+        if (null != focusedControl)
+        {
+            KeyboardFocusChangedEventArgs args = new(focusedControl,
+                    Control.GotKeyboardFocusEvent, oldFocus, focusedControl);
+            eventManager.ProcessRoutedEvent(args.RoutedEvent, args);
+        }
+        //
+        return true;
+    }
+
+    private Control currentScope;
+    /// <summary>
+    /// Current focus area
+    /// </summary>
+    public Control CurrentScope
+    {
+        get { return currentScope; }
+    }
+
+    /// <summary>
+    /// Sets the current focus area. The focus area is set by the parent scope element.
+    /// All its child Focusable-elements can then receive focus.
+    /// Initially, the first Focusable element will receive focus.
+    /// If the focus area does not contain Focusable elements, the operation will not be performed.
+    /// </summary>
+    /// <param name="scope"></param>
+    public void SetFocusScope(Control scope)
+    {
+        SetFocus(scope, null);
+    }
+
+    /// <summary>
+    /// Finds the first suitable focus area among the parent elements of the specified
+    /// control, and sets the corresponding focus. The first suitable - this is the first
+    /// up the hierarchy of controls parent control whose IsFocusScope property = True.
+    /// If control is null, then focus will be removed, and keyboard input will no longer be processed
+    /// (routed events assigned to the current focused element will not be generated).
+    /// </summary>
+    /// <param name="control"></param>
+    public void SetFocus(Control control)
+    {
+        if (null == control)
+        {
+            currentScope = null;
+            tryChangeFocusedElementTo(null);
+            return;
+        }
+
+        Control closestFocusScope = findClosestScope(control);
+        if (null == closestFocusScope)
+            throw new InvalidOperationException("Cannot set focus to control because no focus scope found up to visual tree");
+
+        SetFocus(closestFocusScope, control);
+    }
+
+    /// <summary>
+    /// Finds the nearest element up the control hierarchy with IsFocusScope = True.
+    /// Returns null if no such control element exists.
+    /// </summary>
+    private static Control findClosestScope(Control control)
+    {
+        Debug.Assert(null != control);
+        Control currentParent = control.Parent;
+        while (currentParent != null)
+        {
+            if (currentParent.IsFocusScope)
+                return currentParent;
+
+            currentParent = currentParent.Parent;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Sets the current focus area scope and gives focus to the control element
+    /// </summary>
+    /// <param name="scope"></param>
+    /// <param name="control"></param>
+    public void SetFocus(Control scope, Control control)
+    {
+        ArgumentNullException.ThrowIfNull(scope);
+        if (!scope.IsFocusScope)
+            throw new ArgumentException("IsFocusScope property should be true", nameof(scope));
+
+        List<Control> children = getControlsInScope(scope);
+        if (children.Count == 0)
+        {
+            if (tryChangeFocusedElementTo(null))
+                currentScope = scope;
+            return;
+        }
+
+        Control tofocus;
+        if (null != control)
+        {
+            if (!children.Contains(control))
+                throw new ArgumentException(
+                    "Specified control is not a child of scope or is not visible or is not focusable");
+            tofocus = control;
+        }
+        else
+        {
+            bool reinitFocus = false;
+            // Try to restore focus from StoredFocus field
+            if (scope.StoredFocus != null)
+            {
+                // Check if StoredFocus is not deleted and is Visible & Focusable
+                if (!VisualTreeHelper.IsConnectedToRoot(scope.StoredFocus))
                 {
-                    return false;
-                }
-            }
-
-            // меняем фокусный элемент и генерируем основные события
-            FocusedElement = focusedControl;
-            
-            if (oldFocus != null) {
-                KeyboardFocusChangedEventArgs lostArgs = new KeyboardFocusChangedEventArgs(oldFocus,
-                    Control.LostKeyboardFocusEvent, oldFocus, focusedControl);
-                eventManager.ProcessRoutedEvent(lostArgs.RoutedEvent, lostArgs);
-            }
-            if (null != focusedControl)
-            {
-                KeyboardFocusChangedEventArgs args = new KeyboardFocusChangedEventArgs(focusedControl,
-                        Control.GotKeyboardFocusEvent, oldFocus, focusedControl);
-                eventManager.ProcessRoutedEvent(args.RoutedEvent, args);
-            }
-            //
-            return true;
-        }
-
-        private Control currentScope;
-        /// <summary>
-        /// Текущая область фокуса
-        /// </summary>
-        public Control CurrentScope
-        {
-            get { return currentScope; }
-        }
-
-        /// <summary>
-        /// Устанавливает текущую область фокуса. Область фокуса задаётся родительским элементом scope.
-        /// Все его дочерние Focusable-элементы после этого могут получать фокус.
-        /// Изначально фокус получит первый Focusable элемент.
-        /// Если область фокуса не содержит Focusable элементов, операция не будет выполнена.
-        /// </summary>
-        /// <param name="scope"></param>
-        public void SetFocusScope(Control scope)
-        {
-            SetFocus(scope, null);
-        }
-
-        /// <summary>
-        /// Находит первую подходящую область фокуса среди родительских элементов указанного
-        /// контрола, и устанавливает соответствующий фокус. Первая подходящая - это первый
-        /// вверх по иерархии контролов родительский контрол, у которого свойство IsFocusScope = True.
-        /// Если control - null, то фокус будет убран, и клавиатурный ввод больше не будет обрабатываться
-        /// (не будут генерироваться маршрутизируемые события, назначаемые текущему фокусному элементу).
-        /// </summary>
-        /// <param name="control"></param>
-        public void SetFocus(Control control)
-        {
-            if (null == control)
-            {
-                this.currentScope = null;
-                tryChangeFocusedElementTo(null);
-                return;
-            }
-
-            Control closestFocusScope = findClosestScope(control);
-            if (null == closestFocusScope) 
-                throw new InvalidOperationException("Cannot set focus to control because no focus scope found up to visual tree");
-
-            SetFocus(closestFocusScope, control);
-        }
-
-        /// <summary>
-        /// Находит ближайший вверх по иерархии контролов элемент управления со значением IsFocusScope = True.
-        /// Возвращает null, если такого элемента управления нет.
-        /// </summary>
-        private Control findClosestScope(Control control)
-        {
-            Debug.Assert( null != control );
-            Control currentParent = control.Parent;
-            while (currentParent != null)
-            {
-                if (currentParent.IsFocusScope)
-                    return currentParent;
-
-                currentParent = currentParent.Parent;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Устанавливает текущую область фокуса scope и передает фокус элементу управления control
-        /// </summary>
-        /// <param name="scope"></param>
-        /// <param name="control"></param>
-        public void SetFocus(Control scope, Control control)
-        {
-            if (scope == null)
-                throw new ArgumentNullException("scope");
-            if (!scope.IsFocusScope)
-                throw new ArgumentException("IsFocusScope property should be true", "scope");
-
-            List<Control> children = getControlsInScope(scope);
-            if (children.Count == 0)
-            {
-                if (tryChangeFocusedElementTo(null))
-                    currentScope = scope;
-                return;
-            }
-
-            Control tofocus;
-            if (null != control)
-            {
-                if (!children.Contains(control))
-                    throw new ArgumentException(
-                        "Specified control is not a child of scope or is not visible or is not focusable");
-                tofocus = control;
-            }
-            else
-            {
-                bool reinitFocus = false;
-                // Try to restore focus from StoredFocus field
-                if ( scope.StoredFocus != null ) {
-                    // проверяем, не удалён ли StoredFocus и является ли он Visible & Focusable
-                    if ( !VisualTreeHelper.IsConnectedToRoot( scope.StoredFocus ) ) {
-                        reinitFocus = true;
-                    } else if ( scope.StoredFocus.Visibility != Visibility.Visible ) {
-                        reinitFocus = true;
-                    } else if ( !scope.StoredFocus.Focusable ) {
-                        reinitFocus = true;
-                    }
-                } else {
                     reinitFocus = true;
                 }
-                if (reinitFocus)
-                    tofocus = children[0];
-                else {
-                    tofocus = scope.StoredFocus;
-                }
-            }
-
-            if (tryChangeFocusedElementTo(tofocus))
-            {
-                currentScope = scope;
-            }
-        }
-
-        /// <summary>
-        /// returns visible and focusable childs of scope ordered by z-index
-        /// </summary>
-        private List<Control> getControlsInScope(Control scope)
-        {
-            List<Control> children;
-            List<Control> processed = new List<Control>();
-            if ( scope.Focusable ) {
-                // Добавляем туда же и сам контрол, если он Focusable
-                // этот кейс может быть полезен, если у Focusable контрола, который является также и
-                // FocusScope, нет дочерних элементов. В этом случае фокус будет предоставлен самому
-                // контролу (например, пустое модальное Focusable-окно со специальной отрисовкой)
-
-                // Если же у Focusable & FocusScope контрола есть хотя бы 1 дочерний Focusable-контрол,
-                // то он и получит фокус, на сам FocusScope-контрол уже фокуса передано никогда не будет
-
-                children = new List< Control >( );
-                children.Add( scope );
-            } else {
-                children = new List< Control >( scope.Children );
-            }
-            int i = 0;
-            while (i < children.Count)
-            {
-                Control child = children[i];
-                List<Control> nested = new List< Control >(child.Children);
-                
-                // Using OrderBy instead of List<T>.Sort() because the last one is unstable
-                // and can reorder elements with equal keys
-                nested = nested.OrderBy(control => control.TabOrder).ToList();
-                
-                if (nested.Count > 0)
+                else if (scope.StoredFocus.Visibility != Visibility.Visible)
                 {
-                    children.AddRange(nested);
-                    children.RemoveAt(i);
+                    reinitFocus = true;
                 }
-                else
+                else if (!scope.StoredFocus.Focusable)
                 {
-                    i++;
+                    reinitFocus = true;
                 }
-                processed.Add(child);
-            }
-            List<Control> focusableAndVisible = processed.Where(
-                    c => c.Visibility == Visibility.Visible && c.Focusable
-                ).ToList();
-            return focusableAndVisible;
-        }
-
-        public void MoveFocusNext()
-        {
-            if (null == currentScope)
-                throw new InvalidOperationException("Focus scope isn't set");
-            if (null == FocusedElement)
-            {
-                SetFocus(currentScope, null);
-                return;
-            }
-
-            List<Control> children = getControlsInScope(currentScope);
-            if (children.Count == 0)
-            {
-                return;
-            }
-            int focusedIndex = children.FindIndex(c => c == FocusedElement);
-            if (focusedIndex == -1)
-            {
-                SetFocus(currentScope, null);
-                return;
             }
             else
             {
-                Control child = children[(focusedIndex + 1) % children.Count];
-                tryChangeFocusedElementTo(child);
+                reinitFocus = true;
+            }
+            if (reinitFocus)
+                tofocus = children[0];
+            else
+            {
+                tofocus = scope.StoredFocus;
             }
         }
 
-        public void MoveFocusPrev()
+        if (tryChangeFocusedElementTo(tofocus))
         {
-            if (null == currentScope)
-                throw new InvalidOperationException("Focus scope isn't set");
-            if (null == FocusedElement)
-            {
-                SetFocus(currentScope, null);
-                return;
-            }
+            currentScope = scope;
+        }
+    }
 
-            List<Control> children = getControlsInScope(currentScope);
-            if (children.Count == 0)
+    /// <summary>
+    /// returns visible and focusable childs of scope ordered by z-index
+    /// </summary>
+    private static List<Control> getControlsInScope(Control scope)
+    {
+        List<Control> children;
+        List<Control> processed = [];
+        if (scope.Focusable)
+        {
+            // Add the control itself if it's Focusable
+            // this case can be useful if a Focusable control that is also
+            // FocusScope has no child elements. In this case focus will be given to the
+            // control itself (for example, an empty modal Focusable-window with special rendering)
+
+            // If a Focusable & FocusScope control has at least 1 child Focusable-control,
+            // then it will receive focus, and the FocusScope-control itself will never receive focus
+
+            children = [scope];
+        }
+        else
+        {
+            children = [.. scope.Children];
+        }
+        int i = 0;
+        while (i < children.Count)
+        {
+            Control child = children[i];
+            List<Control> nested = [.. child.Children];
+
+            // Using OrderBy instead of List<T>.Sort() because the last one is unstable
+            // and can reorder elements with equal keys
+            nested = nested.OrderBy(control => control.TabOrder).ToList();
+
+            if (nested.Count > 0)
             {
-                return;
+                children.AddRange(nested);
+                children.RemoveAt(i);
             }
-            int focusedIndex = children.FindIndex(c => c == FocusedElement);
-            if (focusedIndex == -1)
+            else
             {
-                SetFocus(currentScope, null);
-                return;
+                i++;
             }
-            int index = focusedIndex > 0 ? focusedIndex - 1 : children.Count - 1;
-            Control child = children[index];
+            processed.Add(child);
+        }
+        List<Control> focusableAndVisible = processed.Where(
+                c => c.Visibility == Visibility.Visible && c.Focusable
+            ).ToList();
+        return focusableAndVisible;
+    }
+
+    public void MoveFocusNext()
+    {
+        if (null == currentScope)
+            throw new InvalidOperationException("Focus scope isn't set");
+        if (null == FocusedElement)
+        {
+            SetFocus(currentScope, null);
+            return;
+        }
+
+        List<Control> children = getControlsInScope(currentScope);
+        if (children.Count == 0)
+        {
+            return;
+        }
+        int focusedIndex = children.FindIndex(c => c == FocusedElement);
+        if (focusedIndex == -1)
+        {
+            SetFocus(currentScope, null);
+            return;
+        }
+        else
+        {
+            Control child = children[(focusedIndex + 1) % children.Count];
             tryChangeFocusedElementTo(child);
         }
-
-        /// <summary>
-        /// Должен быть вызван перед удалением поддерева элементов.
-        /// Если удаляется поддерево элементов, содержащее в себе контрол, который имеет фокус,
-        /// то FocusManager сбрасывает FocusedElement в null.
-        /// Этот юзкейс не отменяется установкой Handled = true в Preview-событиях.
-        /// </summary>
-        internal void BeforeRemoveElementFromTree(Control control) {
-            if (null == control)
-                throw new ArgumentNullException("control");
-            if (null != FocusedElement && isFocusedElementInSubtree(control)) {
-                tryChangeFocusedElementTo(null, true);
-            }
-        }
-
-        /// <summary>
-        /// Определяет, содержит ли поддерево визуальных элементов, начинающееся с control,
-        /// текущий элемент, удерживающий в данных момент клавиатурный фокус - FocusedElement.
-        /// </summary>
-        private bool isFocusedElementInSubtree(Control control) {
-            Control current = FocusedElement;
-            while (null != current) {
-                if (current == control)
-                    return true;
-                current = current.Parent;
-            }
-            return false;
-        }
-
     }
+
+    public void MoveFocusPrev()
+    {
+        if (null == currentScope)
+            throw new InvalidOperationException("Focus scope isn't set");
+        if (null == FocusedElement)
+        {
+            SetFocus(currentScope, null);
+            return;
+        }
+
+        List<Control> children = getControlsInScope(currentScope);
+        if (children.Count == 0)
+        {
+            return;
+        }
+        int focusedIndex = children.FindIndex(c => c == FocusedElement);
+        if (focusedIndex == -1)
+        {
+            SetFocus(currentScope, null);
+            return;
+        }
+        int index = focusedIndex > 0 ? focusedIndex - 1 : children.Count - 1;
+        Control child = children[index];
+        tryChangeFocusedElementTo(child);
+    }
+
+    /// <summary>
+    /// Should be called before removing a subtree of elements.
+    /// If a subtree of elements containing a control that has focus is removed,
+    /// then FocusManager resets FocusedElement to null.
+    /// This use case is not canceled by setting Handled = true in Preview-events.
+    /// </summary>
+    internal void BeforeRemoveElementFromTree(Control control)
+    {
+        ArgumentNullException.ThrowIfNull(control);
+        if (null != FocusedElement && isFocusedElementInSubtree(control))
+        {
+            tryChangeFocusedElementTo(null, true);
+        }
+    }
+
+    /// <summary>
+    /// Determines whether the visual element subtree starting with control
+    /// contains the current element holding keyboard focus - FocusedElement.
+    /// </summary>
+    private bool isFocusedElementInSubtree(Control control)
+    {
+        Control current = FocusedElement;
+        while (null != current)
+        {
+            if (current == control)
+                return true;
+            current = current.Parent;
+        }
+        return false;
+    }
+
 }

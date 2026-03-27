@@ -104,7 +104,7 @@ namespace Examples.TreeView
                 "Examples.TreeView.main.xml", context);
             windowsHost.Show(mainWindow);
             ConsoleFramework.Controls.TreeView tree = mainWindow.FindChildByName<ConsoleFramework.Controls.TreeView>("tree");
-            // todo : придумать способ для того, чтобы обходиться без такого костыля
+            // todo: come up with a way to do without this workaround
             context.Items = tree.Items;
             ConsoleApplication.Instance.Run(windowsHost);
         }

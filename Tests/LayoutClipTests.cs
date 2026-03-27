@@ -1,9 +1,8 @@
-﻿using ConsoleFramework.Controls;
+using ConsoleFramework.Controls;
 using ConsoleFramework.Core;
 using Xunit;
 
-namespace Tests
-{
+namespace Tests;
     public class LayoutClipTests
     {
         [Theory]
@@ -32,28 +31,31 @@ namespace Tests
             HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
             int expectedX, int expectedY)
         {
-            Control control = new Control {
+            Control control = new()
+            {
                 HorizontalAlignment = horizontalAlignment,
                 VerticalAlignment = verticalAlignment
             };
-            Size inkSize = new Size(inkWidth, inkHeight);
-            Vector offset = control.computeAlignmentOffsetCore(new Size(10, 10), inkSize);
+            Size inkSize = new(inkWidth, inkHeight);
+            Vector offset = control.ComputeAlignmentOffsetCore(new Size(10, 10), inkSize);
             Assert.Equal(new Vector(expectedX, expectedY), offset);
         }
 
         [Fact]
-        public void TestApplyMaxConstraints() {
-            Control control = new Control {
+        public void TestApplyMaxConstraints()
+        {
+            Control control = new()
+            {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 MaxWidth = 3,
-                layoutInfo = new LayoutInfo {
+                layoutInfo = new LayoutInfo
+                {
                     renderSize = new Size(10, 1)
                 }
             };
-            Rect layoutClip = control.applyMaxConstraints(new Rect(-10, -10, 20, 20));
+            Rect layoutClip = control.ApplyMaxConstraints(new Rect(-10, -10, 20, 20));
             // If Max constraint is present, the layoutClip will be clipped to
             // visualLayoutClip: a rect starting from (0, 0) and with size of (MaxWidth, MaxHeight)
             Assert.Equal(new Rect(0, 0, 3, 1), layoutClip);
         }
-    }
-}
+    }

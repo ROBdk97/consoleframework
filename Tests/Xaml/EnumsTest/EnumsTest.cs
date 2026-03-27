@@ -1,18 +1,20 @@
-﻿using System.Collections.Generic;
+using ConsoleFramework.Xaml;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Xaml;
 using Xunit;
 
-namespace Tests.Xaml.EnumsTest
-{
-    public enum MyEnumeration {
+namespace Tests.Xaml.EnumsTest;
+    public enum MyEnumeration
+    {
         Variant1,
         Variant2
     }
 
-    public class ObjectToCreate {
-        public MyEnumeration MyEnum {
+    public class ObjectToCreate
+    {
+        public MyEnumeration MyEnum
+        {
             get;
             set;
         }
@@ -20,21 +22,21 @@ namespace Tests.Xaml.EnumsTest
 
     public class EnumsTest
     {
-        private string loadResource(string resourceName) {
+        private static string loadResource(string resourceName)
+        {
             var assembly = Assembly.GetExecutingAssembly();
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new StreamReader(stream)) {
-                return reader.ReadToEnd();
-            }
-        }
+        using Stream stream = assembly.GetManifestResourceStream(resourceName);
+        using StreamReader reader = new(stream);
+        return reader.ReadToEnd();
+    }
 
         [Fact]
-        public void test() {
+        public void test()
+        {
             string xaml = loadResource("Tests.Xaml.EnumsTest.ObjectToCreate.xml");
-            ObjectToCreate createdObject = XamlParser.CreateFromXaml<ObjectToCreate>(xaml, null, new List<string>() {
+            ObjectToCreate createdObject = XamlParser.CreateFromXaml<ObjectToCreate>(xaml, null, [
                 "clr-namespace:Tests.Xaml.EnumsTest;assembly=Tests"
-            });
+            ]);
             Assert.True(createdObject.MyEnum == MyEnumeration.Variant2);
         }
-    }
-}
+    }

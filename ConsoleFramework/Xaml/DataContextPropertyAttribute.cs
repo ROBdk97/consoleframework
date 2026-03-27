@@ -1,16 +1,13 @@
 using System;
 
-namespace Xaml {
-    /// <summary>
-    /// Attribute to specify name of data context property of any type to be bound using XAML.
-    /// If no attribute found at type, "DataContext" property will be used.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, Inherited = true)]
-    public class DataContextPropertyAttribute : Attribute {
-        public DataContextPropertyAttribute(string name) {
-            Name = name;
-        }
+namespace ConsoleFramework.Xaml;
 
-        public string Name { get; }
-    }
+/// <summary>
+/// Attribute to specify name of data context property of any type to be bound using XAML.
+/// If no attribute found at type, "DataContext" property will be used.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class, Inherited = true)]
+public class DataContextPropertyAttribute(string name) : Attribute
+{
+    public string Name { get; } = name;
 }

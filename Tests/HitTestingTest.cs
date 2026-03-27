@@ -1,31 +1,33 @@
-﻿using ConsoleFramework.Controls;
+using ConsoleFramework.Controls;
 using Xunit;
 
-namespace Tests
-{
+namespace Tests;
     public class HitTestingTest
     {
         class TestControl : Control
         {
-            public new void AddChild( Control control ) {
-                base.AddChild( control );
+            public new void AddChild(Control control)
+            {
+                base.AddChild(control);
             }
         }
 
         [Fact]
-        public void TestControlsDoesntLinkedToCanvas() {
-            TestControl a = new TestControl();
-            TestControl b = new TestControl();
+        public void TestControlsDoesntLinkedToCanvas()
+        {
+            TestControl a = new();
+            TestControl b = new();
             Assert.Null(Control.FindCommonAncestor(a, b));
         }
-        
+
         [Fact]
-        public void TestRootCanvasIsCommonAncestor() {
-            TestControl a = new TestControl();
-            TestControl b = new TestControl();
-            TestControl aa = new TestControl();
+        public void TestRootCanvasIsCommonAncestor()
+        {
+            TestControl a = new();
+            TestControl b = new();
+            TestControl aa = new();
             a.AddChild(aa);
-            TestControl bb = new TestControl();
+            TestControl bb = new();
             b.AddChild(bb);
             Control commonAncestor = Control.FindCommonAncestor(aa, bb);
             Control commonAncestor2 = Control.FindCommonAncestor(bb, aa);
@@ -34,30 +36,32 @@ namespace Tests
         }
 
         [Fact]
-        public void TestSelfIsCommonAncestor() {
-            Control a = new Control();
+        public void TestSelfIsCommonAncestor()
+        {
+            Control a = new();
             Control commonAncestor = Control.FindCommonAncestor(a, a);
             Assert.Equal(commonAncestor, a);
         }
 
         [Fact]
-        public void TestNormalSituation() {
+        public void TestNormalSituation()
+        {
             //
-            TestControl x = new TestControl() { Name = "x" };
-            TestControl ancestor = new TestControl() { Name = "ancestor" };
-            x.AddChild( ancestor );
-            TestControl a = new TestControl() { Name = "a" };
-            ancestor.AddChild( a );
-            TestControl aa = new TestControl() { Name = "aa" };
-            a.AddChild( aa );
-            TestControl aaa = new TestControl() { Name = "aaa" };
-            aa.AddChild( aaa );
-            TestControl b = new TestControl() { Name = "b" };
-            ancestor.AddChild( b );
+            TestControl x = new() { Name = "x" };
+            TestControl ancestor = new() { Name = "ancestor" };
+            x.AddChild(ancestor);
+            TestControl a = new() { Name = "a" };
+            ancestor.AddChild(a);
+            TestControl aa = new() { Name = "aa" };
+            a.AddChild(aa);
+            TestControl aaa = new() { Name = "aaa" };
+            aa.AddChild(aaa);
+            TestControl b = new() { Name = "b" };
+            ancestor.AddChild(b);
             Assert.Equal(Control.FindCommonAncestor(a, b), ancestor);
             Assert.Equal(Control.FindCommonAncestor(aa, b), ancestor);
-            TestControl bb = new TestControl() { Name = "bb" };
-            b.AddChild( bb );
+            TestControl bb = new() { Name = "bb" };
+            b.AddChild(bb);
             Assert.Equal(Control.FindCommonAncestor(aa, bb), ancestor);
             //
             Assert.Equal(Control.FindCommonAncestor(a, aa), a);
@@ -67,5 +71,4 @@ namespace Tests
             //
             Assert.Equal(Control.FindCommonAncestor(aaa, ancestor), ancestor);
         }
-    }
-}
+    }

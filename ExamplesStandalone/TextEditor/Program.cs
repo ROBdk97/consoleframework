@@ -1,16 +1,14 @@
-﻿using ConsoleFramework;
+using ConsoleFramework;
 using ConsoleFramework.Controls;
 
-namespace Examples.TextEditor
-{
+namespace TextEditor;
     public class Program
     {
         public static void Main(string[] args)
         {
-            WindowsHost windowsHost = new WindowsHost();
+            WindowsHost windowsHost = new();
             Window mainWindow = (Window)ConsoleApplication.LoadFromXaml("TextEditor.main.xml", null);
             windowsHost.Show(mainWindow);
             ConsoleApplication.Instance.Run(windowsHost);
         }
-    }
-}
+    }

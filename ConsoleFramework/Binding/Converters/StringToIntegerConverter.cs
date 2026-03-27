@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Binding.Converters
+namespace ConsoleFramework.Binding.Converters;
+
+/// <summary>
+/// Converter between string and Integer.
+/// </summary>
+public class StringToIntegerConverter : IBindingConverter
 {
-    /// <summary>
-    /// Converter between String and Integer.
-    /// </summary>
-    public class StringToIntegerConverter : IBindingConverter {
-        public Type FirstType => typeof(String);
+    public Type FirstType => typeof(string);
+    public Type SecondType => typeof(int);
 
-        public Type SecondType => typeof(int);
-
-        public ConversionResult Convert(Object s) {
-            try {
-                if (s == null) return new ConversionResult( false, "String is null");
-                int value = int.Parse(( string ) s);
-                return new ConversionResult(value);
-            } catch (FormatException e) {
-                return new ConversionResult(false, "Incorrect number");
-            }
-        }
-
-        public ConversionResult ConvertBack(Object integer) {
-            return new ConversionResult(((int) integer).ToString(CultureInfo.InvariantCulture));
-        }
+    public ConversionResult Convert(object s)
+    {
+        if (s is not string str) return new ConversionResult(false, "String is null");
+        return int.TryParse(str, out int value)
+            ? new ConversionResult(value)
+            : new ConversionResult(false, "Incorrect number");
     }
+
+    public ConversionResult ConvertBack(object integer) =>
+        new(((int)integer).ToString(CultureInfo.InvariantCulture));
 }
