@@ -31,12 +31,12 @@ namespace Tests;
             HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
             int expectedX, int expectedY)
         {
-            Control control = new Control
+            Control control = new()
             {
                 HorizontalAlignment = horizontalAlignment,
                 VerticalAlignment = verticalAlignment
             };
-            Size inkSize = new Size(inkWidth, inkHeight);
+            Size inkSize = new(inkWidth, inkHeight);
             Vector offset = control.computeAlignmentOffsetCore(new Size(10, 10), inkSize);
             Assert.Equal(new Vector(expectedX, expectedY), offset);
         }
@@ -44,7 +44,7 @@ namespace Tests;
         [Fact]
         public void TestApplyMaxConstraints()
         {
-            Control control = new Control
+            Control control = new()
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 MaxWidth = 3,

@@ -1,11 +1,10 @@
-﻿using System;
-using ConsoleFramework.Xaml;
-using Xaml;
+﻿using ConsoleFramework.Xaml;
+using System;
 
 namespace ConsoleFramework.Core;
 
 /// <summary>
-/// Converter for XAML. Supports only String → Thickness conversion.
+/// Converter for XAML. Supports only string → Thickness conversion.
 /// </summary>
 public class ThicknessConverter : ITypeConverter
 {

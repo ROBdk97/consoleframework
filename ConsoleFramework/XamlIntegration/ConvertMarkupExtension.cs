@@ -1,9 +1,8 @@
-﻿using System;
-using System.Reflection;
-using Binding.Converters;
-using Xaml;
+﻿using ConsoleFramework.Binding.Converters;
+using ConsoleFramework.Xaml;
+using System;
 
-namespace ConsoleFramework.Xaml;
+namespace ConsoleFramework.XamlIntegration;
 
 /// <summary>
 /// Converts Value to property type using the specified converter.
@@ -14,7 +13,7 @@ public class ConvertMarkupExtension : IMarkupExtension
     /// <summary>Converter to be used.</summary>
     public IBindingConverter? Converter { get; set; }
 
-    /// <summary>Value to convert. String or any object (if created using a nested markup extension).</summary>
+    /// <summary>Value to convert. string or any object (if created using a nested markup extension).</summary>
     public object? Value { get; set; }
 
     public object? ProvideValue(IMarkupExtensionContext context)

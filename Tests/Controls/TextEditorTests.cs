@@ -7,7 +7,7 @@ namespace Tests.Controls;
         [Fact]
         public void TestInsertFirstLine()
         {
-            TextHolder holder = new TextHolder("");
+            TextHolder holder = new("");
             holder.Insert(0, 0, "First line");
             Assert.Equal("First line", holder.Text);
         }
@@ -15,7 +15,7 @@ namespace Tests.Controls;
         [Fact]
         public void TestInsertSecondLine()
         {
-            TextHolder holder = new TextHolder("First line");
+            TextHolder holder = new("First line");
             holder.Insert(0, "First line".Length, @"
 Second line");
             Assert.Equal(@"First line
@@ -25,7 +25,7 @@ Second line", holder.Text);
         [Fact]
         public void TestInsertFewLines()
         {
-            TextHolder holder = new TextHolder(@"First line
+            TextHolder holder = new(@"First line
 Second line");
             holder.Insert(1, 0, @"Intermediate line 1
 Intermediate line 2
@@ -41,7 +41,7 @@ Second line", holder.Text);
         [Fact]
         public void TestSplitOneLine()
         {
-            TextHolder holder = new TextHolder(@"First line
+            TextHolder holder = new(@"First line
 Second long line");
             holder.Insert(1, "Second lo".Length, @"1234
 5678
@@ -55,7 +55,7 @@ Second lo1234
         [Fact]
         public void TestWriteToWindow()
         {
-            TextHolder holder = new TextHolder(@"Line 1
+            TextHolder holder = new(@"Line 1
 Line 2
 Line 3
 Line 4
@@ -76,7 +76,7 @@ Line 5");
         [Fact]
         public void TestWriteToWindow2()
         {
-            TextHolder holder = new TextHolder(@"Line 1
+            TextHolder holder = new(@"Line 1
 Line 2
 Line 3");
             char[,] buf = new char[7, 10];
@@ -97,7 +97,7 @@ Line 3");
         [Fact]
         public void TestWriteToWindow3()
         {
-            TextHolder holder = new TextHolder(@"Line 1
+            TextHolder holder = new(@"Line 1
 Line 2
 Line 3
 Line 4
@@ -116,7 +116,7 @@ Line 5");
         [Fact]
         public void TestDelete()
         {
-            TextHolder holder = new TextHolder(@"Line 1
+            TextHolder holder = new(@"Line 1
 Line 2
 Line 3");
             holder.Delete(0, 2, 0, 3);
@@ -127,7 +127,7 @@ Line 3");
         [Fact]
         public void TestDeleteLines()
         {
-            TextHolder holder = new TextHolder(@"Line 1
+            TextHolder holder = new(@"Line 1
 Line 2
 Line 3
 Line 4

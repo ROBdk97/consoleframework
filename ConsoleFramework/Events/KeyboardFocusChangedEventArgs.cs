@@ -2,8 +2,6 @@ using ConsoleFramework.Controls;
 
 namespace ConsoleFramework.Events;
 
-public delegate void KeyboardFocusChangedEventHandler(object sender, KeyboardFocusChangedEventArgs args);
-
 public class KeyboardFocusChangedEventArgs : RoutedEventArgs
 {
     public KeyboardFocusChangedEventArgs(object source, RoutedEvent routedEvent)

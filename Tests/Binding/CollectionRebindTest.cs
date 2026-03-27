@@ -1,21 +1,21 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Binding;
-using Binding.Observables;
+using ConsoleFramework.Binding;
 using Xunit;
+using ConsoleFramework.Binding.Observables;
 
-namespace TestProject1.Binding;
+namespace Tests.Binding;
     public class CollectionRebindTest
     {
         class TargetClass
         {
             public TargetClass()
             {
-                Items = new List<string>();
+                Items = [];
             }
 
-            public List<String> Items
+            public List<string> Items
             {
                 get;
                 set;
@@ -26,13 +26,13 @@ namespace TestProject1.Binding;
         {
             public SourceClass()
             {
-                SourceItems = new ObservableList(new List<String>());
+                SourceItems = new ObservableList(new List<string>());
                 // Rebind collection after first change
                 // This first change should not affect target list
                 SourceItems.ListChanged += (sender, args) =>
                 {
-                    SourceItems = new ObservableList(new List<String>());
-                    raisePropertyChanged("SourceItems");
+                    SourceItems = new ObservableList(new List<string>());
+                    raisePropertyChanged(nameof(SourceItems));
                 };
             }
 
@@ -42,17 +42,16 @@ namespace TestProject1.Binding;
 
             protected virtual void raisePropertyChanged(string propertyName)
             {
-                PropertyChangedEventHandler handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         }
 
         [Fact]
         public void TestListRebind()
         {
-            SourceClass source = new SourceClass();
-            TargetClass target = new TargetClass();
-            BindingBase binding = new BindingBase(target, "Items", source, "SourceItems", BindingMode.OneWay);
+            SourceClass source = new();
+            TargetClass target = new();
+        BindingBase binding = new(target, "Items", source, "SourceItems", BindingMode.OneWay);
             binding.Bind();
             source.SourceItems.Add("1");
             // First change should not affect target list

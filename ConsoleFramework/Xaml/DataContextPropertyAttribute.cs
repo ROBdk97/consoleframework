@@ -1,6 +1,6 @@
 using System;
 
-namespace Xaml;
+namespace ConsoleFramework.Xaml;
 
 /// <summary>
 /// Attribute to specify name of data context property of any type to be bound using XAML.

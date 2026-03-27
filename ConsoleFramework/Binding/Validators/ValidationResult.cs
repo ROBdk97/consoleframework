@@ -1,4 +1,4 @@
-﻿namespace Binding.Validators;
+﻿namespace ConsoleFramework.Binding.Validators;
 
 /// <summary>
 /// Represents the result of data binding validation.

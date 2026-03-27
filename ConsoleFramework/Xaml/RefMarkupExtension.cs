@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xaml;
+namespace ConsoleFramework.Xaml;
 
 /// <summary>
 /// Returns an object referenced in the expression.

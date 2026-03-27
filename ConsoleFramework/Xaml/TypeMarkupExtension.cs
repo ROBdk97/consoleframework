@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Xaml;
+namespace ConsoleFramework.Xaml;
 
 /// <summary>
 /// Returns a Type by name. The name may include type arguments,

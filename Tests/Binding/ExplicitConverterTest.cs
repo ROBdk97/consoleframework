@@ -1,17 +1,17 @@
+using ConsoleFramework.Binding;
+using ConsoleFramework.Binding.Converters;
 using System;
 using System.ComponentModel;
 using System.Globalization;
-using Binding;
-using Binding.Converters;
 using Xunit;
 
-namespace TestProject1.Binding;
+namespace Tests.Binding;
     public class ExplicitConverterTest
     {
         class TargetClass : INotifyPropertyChanged
         {
             private string text;
-            public String Text
+            public string Text
             {
                 get { return text; }
                 set
@@ -19,7 +19,7 @@ namespace TestProject1.Binding;
                     if (text != value)
                     {
                         text = value;
-                        raisePropertyChanged("Text");
+                        raisePropertyChanged(nameof(Text));
                     }
                 }
             }
@@ -28,9 +28,8 @@ namespace TestProject1.Binding;
 
             protected virtual void raisePropertyChanged(string propertyName)
             {
-                PropertyChangedEventHandler handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         }
 
         class SourceClass : INotifyPropertyChanged
@@ -43,7 +42,7 @@ namespace TestProject1.Binding;
                     if (!Equals(value, sourceInt))
                     {
                         sourceInt = value;
-                        raisePropertyChanged("Val");
+                        raisePropertyChanged(nameof(Val));
                     }
                 }
             }
@@ -54,13 +53,12 @@ namespace TestProject1.Binding;
 
             protected virtual void raisePropertyChanged(string propertyName)
             {
-                PropertyChangedEventHandler handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         }
 
         class DoubleToStringConverter : IBindingConverter
-        {
+    {
             public Type FirstType
             {
                 get { return typeof(double); }
@@ -68,7 +66,7 @@ namespace TestProject1.Binding;
 
             public Type SecondType
             {
-                get { return typeof(String); }
+                get { return typeof(string); }
             }
 
             public ConversionResult Convert(object first)
@@ -78,26 +76,27 @@ namespace TestProject1.Binding;
 
             public ConversionResult ConvertBack(object second)
             {
-                String s = (string)second;
+            string s = (string)second;
                 if (string.IsNullOrEmpty(s))
                     return new ConversionResult(false, "String is null or empty");
-                double result;
-                if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
-                {
-                    return new ConversionResult(result);
-                }
-                return new ConversionResult(false, "Conversion failed");
+            if (double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
+            {
+                return new ConversionResult(result);
+            }
+            return new ConversionResult(false, "Conversion failed");
             }
         }
 
         [Fact]
         public void TestMethod1()
         {
-            TargetClass target = new TargetClass();
-            SourceClass source = new SourceClass();
-            BindingBase binding = new BindingBase(target, "Text", source, "Val");
-            binding.Converter = new DoubleToStringConverter();
-            binding.Bind();
+            TargetClass target = new();
+            SourceClass source = new();
+        BindingBase binding = new(target, "Text", source, "Val")
+        {
+            Converter = new DoubleToStringConverter()
+        };
+        binding.Bind();
             source.Val = 3.0f;
             Assert.True(target.Text == "3");
             target.Text = "0.5";

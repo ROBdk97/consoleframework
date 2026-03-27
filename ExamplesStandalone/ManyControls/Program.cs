@@ -10,16 +10,15 @@ using ConsoleFramework;
 using ConsoleFramework.Controls;
 using ConsoleFramework.Core;
 using ConsoleFramework.Xaml;
-using Xaml;
 
-namespace Examples;
+namespace ManyControls;
 
 public class Program
 {
     class MyDataContext : INotifyPropertyChanged
     {
         private string str;
-        public String Str
+        public string Str
         {
             get { return str; }
             set
@@ -27,7 +26,7 @@ public class Program
                 if (str != value)
                 {
                     str = value;
-                    raisePropertyChanged("Str");
+                    raisePropertyChanged(nameof(Str));
                 }
             }
         }
@@ -36,8 +35,7 @@ public class Program
 
         protected virtual void raisePropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -61,176 +59,183 @@ public class Program
         var resourceName = "ManyControls.GridTest.xaml";
         Window createdFromXaml;
         using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-        using (StreamReader reader = new StreamReader(stream))
+        using (StreamReader reader = new(stream))
         {
             string result = reader.ReadToEnd();
-            MyDataContext dataContext = new MyDataContext();
-            dataContext.Str = "Введите заголовок";
-            createdFromXaml = XamlParser.CreateFromXaml<Window>(result, dataContext, new List<string>()
-                    {
+            MyDataContext dataContext = new()
+            {
+                Str = "Enter title"
+            };
+            createdFromXaml = XamlParser.CreateFromXaml<Window>(result, dataContext,
+                    [
                         "clr-namespace:Xaml;assembly=ConsoleFramework",
                         "clr-namespace:ConsoleFramework.Xaml;assembly=ConsoleFramework",
                         "clr-namespace:ConsoleFramework.Controls;assembly=ConsoleFramework",
-                    });
+                    ]);
         }
         //            ConsoleApplication.Instance.Run(createdFromXaml);
         //            return;
 
-        using (ConsoleApplication application = ConsoleApplication.Instance)
+        using ConsoleApplication application = ConsoleApplication.Instance;
+        Panel panel = new()
         {
-            Panel panel = new Panel();
-            panel.Name = "panel1";
-            panel.HorizontalAlignment = HorizontalAlignment.Center;
-            panel.VerticalAlignment = VerticalAlignment.Stretch;
-            panel.Children.Add(new TextBlock()
+            Name = "panel1",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+        panel.Children.Add(new TextBlock()
+        {
+            Name = "label1",
+            Text = "Label1",
+            Margin = new Thickness(1, 2, 1, 0)
+            //,Visibility = Visibility.Collapsed
+        });
+        panel.Children.Add(new TextBlock()
+        {
+            Name = "label2",
+            Text = "Label2_____",
+            HorizontalAlignment = HorizontalAlignment.Right
+        });
+        TextBox textBox = new()
+        {
+            MaxWidth = 10,
+            Margin = new Thickness(1),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Size = 15
+        };
+        Button button = new()
+        {
+            Name = "button1",
+            Caption = "Button!",
+            Margin = new Thickness(1),
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+        button.OnClick += (sender, eventArgs) =>
+        {
+            Debug.WriteLine("Click");
+            MessageBox.Show("Message", "Attention! Test message", delegate (MessageBoxResult result) { });
+            Control label = panel.FindDirectChildByName("label1");
+            if (label.Visibility == Visibility.Visible)
             {
-                Name = "label1",
-                Text = "Label1",
-                Margin = new Thickness(1, 2, 1, 0)
-                //,Visibility = Visibility.Collapsed
-            });
-            panel.Children.Add(new TextBlock()
-            {
-                Name = "label2",
-                Text = "Label2_____",
-                HorizontalAlignment = HorizontalAlignment.Right
-            });
-            TextBox textBox = new TextBox()
-            {
-                MaxWidth = 10,
-                Margin = new Thickness(1),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Size = 15
-            };
-            Button button = new Button()
-            {
-                Name = "button1",
-                Caption = "Button!",
-                Margin = new Thickness(1),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            button.OnClick += (sender, eventArgs) =>
-            {
-                Debug.WriteLine("Click");
-                MessageBox.Show("Окно сообщения", "Внимание ! Тестовое сообщение", delegate (MessageBoxResult result) { });
-                Control label = panel.FindDirectChildByName("label1");
-                if (label.Visibility == Visibility.Visible)
-                {
-                    label.Visibility = Visibility.Collapsed;
-                }
-                else if (label.Visibility == Visibility.Collapsed)
-                {
-                    label.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    label.Visibility = Visibility.Visible;
-                }
-                label.Invalidate();
-            };
-            ComboBox comboBox = new ComboBox()
-            {
-                //                        Width = 14
-                //HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-            comboBox.Items.Add("Сделать одно");
-            comboBox.Items.Add("Сделать второе");
-            comboBox.Items.Add("Ничего не делать");
-            ListBox listbox = new ListBox();
-            listbox.Items.Add("First item");
-            listbox.Items.Add("second item1!!!!!!1fff");
-            listbox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            //listbox.Width = 10;
-
-            panel.Children.Add(comboBox);
-            panel.Children.Add(button);
-            panel.Children.Add(textBox);
-            panel.Children.Add(listbox);
-
-            //application.Run(panel);
-            WindowsHost windowsHost = new WindowsHost()
-            {
-                Name = "WindowsHost"
-            };
-
-            Window window1 = new Window
-            {
-                X = 5,
-                Y = 4,
-                //MinHeight = 100,
-                //MaxWidth = 30,
-                //Width = 10,
-                Height = 20,
-                Name = "Window1",
-                Title = "Window1",
-                Content = panel
-            };
-
-            GroupBox groupBox = new GroupBox();
-            groupBox.Title = "Группа";
-            ScrollViewer scrollViewer = new ScrollViewer();
-            ListBox listBox = new ListBox();
-            for (int i = 0; i < 30; i++)
-            {
-                listBox.Items.Add(string.Format("Длинный элемент {0}", i));
+                label.Visibility = Visibility.Collapsed;
             }
-            //                listBox.Items.Add( "Длинный элемент" );
-            //                listBox.Items.Add("Длинный элемент 2");
-            //                listBox.Items.Add("Длинный элемент 3");
-            //                listBox.Items.Add("Длинный элемент 4");
-            //                listBox.Items.Add("Длинный элемент 5");
-            //                listBox.Items.Add("Длинный элемент 6");
-            //                listBox.Items.Add("Длинный элемент 700");
-            listBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            listBox.VerticalAlignment = VerticalAlignment.Stretch;
-            scrollViewer.Content = listBox;
-            //                scrollViewer.HorizontalAlignment = HorizontalAlignment.Stretch;
-            scrollViewer.VerticalAlignment = VerticalAlignment.Stretch;
-            scrollViewer.HorizontalScrollEnabled = true;
-
-            groupBox.Content = scrollViewer;
-
-            ComboBox combo = new ComboBox();
-            combo.ShownItemsCount = 10;
-            for (int i = 0; i < 30; i++)
+            else if (label.Visibility == Visibility.Collapsed)
             {
-                combo.Items.Add(string.Format("Длинный элемент {0}", i));
+                label.Visibility = Visibility.Hidden;
             }
-            //                groupBox.Content = combo;
-
-            groupBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-
-            windowsHost.Show(new Window()
+            else
             {
-                X = 30,
-                Y = 6,
-                //MinHeight = 10,
-                //MinWidth = 10,
-                Height = 14,
-                Name = "LongTitleWindow",
-                Title = "Очень длинное название окна",
-                Content = groupBox
-            });
-            windowsHost.Show(window1);
-            windowsHost.Show(createdFromXaml);
-            //textBox.SetFocus(); todo : научиться задавать фокусный элемент до добавления в визуальное дерево
-            //application.TerminalSizeChanged += ( sender, eventArgs ) => {
-            //    application.CanvasSize = new Size(eventArgs.Width, eventArgs.Height);
-            //   application.RootElementRect = new Rect(new Size(eventArgs.Width, eventArgs.Height));
-            // };
-            //windowsHost.Width = 80;
-            //windowsHost.Height = 20;
+                label.Visibility = Visibility.Visible;
+            }
+            label.Invalidate();
+        };
+        ComboBox comboBox = new()
+        {
+            //                        Width = 14
+            //HorizontalAlignment = HorizontalAlignment.Stretch
+        };
+        comboBox.Items.Add("Do one thing");
+        comboBox.Items.Add("Do second thing");
+        comboBox.Items.Add("Do nothing");
+        ListBox listbox = new();
+        listbox.Items.Add("First item");
+        listbox.Items.Add("second item1!!!!!!1fff");
+        listbox.HorizontalAlignment = HorizontalAlignment.Stretch;
+        //listbox.Width = 10;
 
-            Window persistentWindow = new Window
+        panel.Children.Add(comboBox);
+        panel.Children.Add(button);
+        panel.Children.Add(textBox);
+        panel.Children.Add(listbox);
+
+        //application.Run(panel);
+        WindowsHost windowsHost = new()
+        {
+            Name = "WindowsHost"
+        };
+
+        Window window1 = new()
+        {
+            X = 5,
+            Y = 4,
+            //MinHeight = 100,
+            //MaxWidth = 30,
+            //Width = 10,
+            Height = 20,
+            Name = "Window1",
+            Title = "Window1",
+            Content = panel
+        };
+
+        GroupBox groupBox = new()
+        {
+            Title = "Group"
+        };
+        ScrollViewer scrollViewer = new();
+        ListBox listBox = new();
+        for (int i = 0; i < 30; i++)
+        {
+            listBox.Items.Add(string.Format("Long item {0}", i));
+        }
+        //                listBox.Items.Add( "Long item" );
+        //                listBox.Items.Add("Long item 2");
+        //                listBox.Items.Add("Long item 3");
+        //                listBox.Items.Add("Long item 4");
+        //                listBox.Items.Add("Long item 5");
+        //                listBox.Items.Add("Long item 6");
+        //                listBox.Items.Add("Long item 700");
+        listBox.HorizontalAlignment = HorizontalAlignment.Stretch;
+        listBox.VerticalAlignment = VerticalAlignment.Stretch;
+        scrollViewer.Content = listBox;
+        //                scrollViewer.HorizontalAlignment = HorizontalAlignment.Stretch;
+        scrollViewer.VerticalAlignment = VerticalAlignment.Stretch;
+        scrollViewer.HorizontalScrollEnabled = true;
+
+        groupBox.Content = scrollViewer;
+
+        ComboBox combo = new()
+        {
+            ShownItemsCount = 10
+        };
+        for (int i = 0; i < 30; i++)
+        {
+            combo.Items.Add(string.Format("Long item {0}", i));
+        }
+        //                groupBox.Content = combo;
+
+        groupBox.HorizontalAlignment = HorizontalAlignment.Stretch;
+
+        windowsHost.Show(new Window()
+        {
+            X = 30,
+            Y = 6,
+            //MinHeight = 10,
+            //MinWidth = 10,
+            Height = 14,
+            Name = "LongTitleWindow",
+            Title = "Very long window title",
+            Content = groupBox
+        });
+        windowsHost.Show(window1);
+        windowsHost.Show(createdFromXaml);
+        //textBox.SetFocus(); todo : learn how to set focused element before adding to visual tree
+        //application.TerminalSizeChanged += ( sender, eventArgs ) => {
+        //    application.CanvasSize = new Size(eventArgs.Width, eventArgs.Height);
+        //   application.RootElementRect = new Rect(new Size(eventArgs.Width, eventArgs.Height));
+        // };
+        //windowsHost.Width = 80;
+        //windowsHost.Height = 20;
+
+        Window persistentWindow = new()
+        {
+            X = 10,
+            Y = 10,
+            Title = "Persistent Window",
+            Height = 14,
+            Width = 50,
+            Content = new Panel
             {
-                X = 10,
-                Y = 10,
-                Title = "Persistent Window",
-                Height = 14,
-                Width = 50,
-                Content = new Panel
-                {
-                    Children = {
+                Children = {
                             new Button {
                                 Caption = "OK",
                                 Width = 30,
@@ -239,17 +244,16 @@ public class Program
                                 VerticalAlignment = VerticalAlignment.Center
                             }
                         }
-                }
-            };
+            }
+        };
 
-            persistentWindow.Closing += (sender, e) =>
-            {
-                e.Cancel = true;
-            };
+        persistentWindow.Closing += (sender, e) =>
+        {
+            e.Cancel = true;
+        };
 
-            windowsHost.Show(persistentWindow);
+        windowsHost.Show(persistentWindow);
 
-            application.Run(windowsHost);
-        }
+        application.Run(windowsHost);
     }
 }

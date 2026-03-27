@@ -34,10 +34,7 @@ namespace Tests;
             {
                 LastArrangeOverrideArgument = finalSize;
                 LastArrangeOverrideResult = base.ArrangeOverride(finalSize);
-                if (null != Content)
-                {
-                    Content.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-                }
+                Content?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
                 return LastArrangeOverrideResult.Value;
             }
 
@@ -111,8 +108,8 @@ namespace Tests;
         [Fact]
         public void TestNormalMeasure()
         {
-            TestContentControl contentControl = new TestContentControl();
-            TestFinalControl finalControl = new TestFinalControl
+            TestContentControl contentControl = new();
+            TestFinalControl finalControl = new()
             {
                 Width = 100,
                 Height = 100,
@@ -141,8 +138,8 @@ namespace Tests;
         [Fact]
         public void TestNormalMeasure2()
         {
-            TestContentControl contentControl = new TestContentControl();
-            TestFinalControl finalControl = new TestFinalControl
+            TestContentControl contentControl = new();
+            TestFinalControl finalControl = new()
             {
                 Width = 100,
                 Height = 20,
@@ -187,8 +184,8 @@ namespace Tests;
         [Fact]
         public void TestNormalMeasure3()
         {
-            TestContentControl contentControl = new TestContentControl();
-            TestFinalControl finalControl = new TestFinalControl
+            TestContentControl contentControl = new();
+            TestFinalControl finalControl = new()
             {
                 Width = 100,
                 Height = 20,
