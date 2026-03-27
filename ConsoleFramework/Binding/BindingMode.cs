@@ -1,5 +1,4 @@
-﻿namespace Binding
-{
+namespace Binding;
     /// <summary>
     /// Determines how data will flow - from Source to Target,
     /// from Target to Source or both.
@@ -28,5 +27,4 @@
         /// </summary>
         Default
     }
-
-}
+

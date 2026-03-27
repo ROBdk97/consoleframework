@@ -1,8 +1,7 @@
-﻿using ConsoleFramework;
+using ConsoleFramework;
 using ConsoleFramework.Controls;
 
-namespace Examples.TextEditor
-{
+namespace Examples.TextEditor;
     public class Program
     {
         public static void Main(string[] args)
@@ -12,5 +11,4 @@ namespace Examples.TextEditor
             windowsHost.Show(mainWindow);
             ConsoleApplication.Instance.Run(windowsHost);
         }
-    }
-}
+    }

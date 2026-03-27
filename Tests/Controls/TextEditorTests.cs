@@ -1,8 +1,7 @@
-﻿using ConsoleFramework.Controls;
+using ConsoleFramework.Controls;
 using Xunit;
 
-namespace Tests.Controls
-{
+namespace Tests.Controls;
     public class TextEditorTests
     {
         [Fact]
@@ -115,7 +114,8 @@ Line 5");
         }
 
         [Fact]
-        public void TestDelete() {
+        public void TestDelete()
+        {
             TextHolder holder = new TextHolder(@"Line 1
 Line 2
 Line 3");
@@ -125,7 +125,8 @@ Line 3");
         }
 
         [Fact]
-        public void TestDeleteLines() {
+        public void TestDeleteLines()
+        {
             TextHolder holder = new TextHolder(@"Line 1
 Line 2
 Line 3
@@ -136,5 +137,4 @@ Line 5");
 Liine 4
 Line 5", holder.Text);
         }
-    }
-}
+    }

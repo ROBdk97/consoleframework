@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using ConsoleFramework.Core;
 using ConsoleFramework.Events;
 using ConsoleFramework.Native;
 using ConsoleFramework.Rendering;
 
-namespace ConsoleFramework.Controls {
-    public class ScrollBarValueChanged : RoutedEventArgs {
-        public ScrollBarValueChanged(object source, RoutedEvent routedEvent) : base(source, routedEvent) {
+namespace ConsoleFramework.Controls;
+    public class ScrollBarValueChanged : RoutedEventArgs
+    {
+        public ScrollBarValueChanged(object source, RoutedEvent routedEvent) : base(source, routedEvent)
+        {
         }
     }
 
@@ -15,16 +17,20 @@ namespace ConsoleFramework.Controls {
     /// <summary>
     /// Auxiliary control only displaying the scroll bar.
     /// </summary>
-    public class ScrollBar : Control {
+    public class ScrollBar : Control
+    {
         public static RoutedEvent ScrollBarValueChangedEvent =
             EventManager.RegisterRoutedEvent("ScrollBarValueChanged", RoutingStrategy.Bubble,
                 typeof(ScrollBarValueChangedEventHandler), typeof(ScrollBar));
 
         private Orientation orientation = Orientation.Horizontal;
-        public Orientation Orientation {
+        public Orientation Orientation
+        {
             get => orientation;
-            set {
-                if (orientation != value) {
+            set
+            {
+                if (orientation != value)
+                {
                     orientation = value;
                     Invalidate();
                 }
@@ -32,10 +38,13 @@ namespace ConsoleFramework.Controls {
         }
 
         private int value = 0;
-        public int Value {
+        public int Value
+        {
             get => value;
-            set {
-                if (value != this.value) {
+            set
+            {
+                if (value != this.value)
+                {
                     this.value = Math.Min(maxValue, value);
                     Invalidate();
                 }
@@ -43,10 +52,13 @@ namespace ConsoleFramework.Controls {
         }
 
         private int maxValue = 100;
-        public int MaxValue {
+        public int MaxValue
+        {
             get => maxValue;
-            set {
-                if (value != maxValue) {
+            set
+            {
+                if (value != maxValue)
+                {
                     maxValue = value;
                     this.value = Math.Min(this.value, maxValue);
                     Invalidate();
@@ -54,7 +66,8 @@ namespace ConsoleFramework.Controls {
             }
         }
 
-        public ScrollBar() {
+        public ScrollBar()
+        {
             // Control doesn't work with another modes
             // because it requires you arrange it with actual size, but since
             // MeasureOverride() is not implemented, the Arrange() method will be called
@@ -63,44 +76,58 @@ namespace ConsoleFramework.Controls {
             VerticalAlignment = VerticalAlignment.Stretch;
         }
 
-        public override void Render(RenderingBuffer buffer) {
-            if (Orientation == Orientation.Horizontal) {
+        public override void Render(RenderingBuffer buffer)
+        {
+            if (Orientation == Orientation.Horizontal)
+            {
                 renderHorizontal(buffer);
-            } else {
+            }
+            else
+            {
                 renderVertical(buffer);
             }
         }
 
-        private void renderHorizontal(RenderingBuffer buffer) {
+        private void renderHorizontal(RenderingBuffer buffer)
+        {
             Attr attr = Colors.Blend(Color.DarkCyan, Color.DarkBlue);
-            if (ActualWidth >= 1) {
+            if (ActualWidth >= 1)
+            {
                 buffer.FillRectangle(0, 0, 1, ActualHeight, UnicodeTable.ArrowLeft, attr); // ◄
             }
-            if (ActualWidth >= 2) {
+            if (ActualWidth >= 2)
+            {
                 buffer.FillRectangle(ActualWidth - 1, 0, 1, ActualHeight, UnicodeTable.ArrowRight, attr); // ►
             }
-            if (ActualWidth >= 3) {
+            if (ActualWidth >= 3)
+            {
                 buffer.FillRectangle(1, 0, ActualWidth - 2, ActualHeight, UnicodeTable.MediumShade, attr); // ▒
                 buffer.FillRectangle(getCurrentPage() + 1, 0, 1, ActualHeight, UnicodeTable.BlackSquare, attr); // ■
             }
         }
 
-        private void renderVertical(RenderingBuffer buffer) {
+        private void renderVertical(RenderingBuffer buffer)
+        {
             Attr attr = Colors.Blend(Color.DarkCyan, Color.DarkBlue);
-            if (ActualHeight >= 1) {
+            if (ActualHeight >= 1)
+            {
                 buffer.FillRectangle(0, 0, ActualWidth, 1, UnicodeTable.ArrowUp, attr); // ▲
             }
-            if (ActualHeight >= 2) {
+            if (ActualHeight >= 2)
+            {
                 buffer.FillRectangle(0, ActualHeight - 1, ActualWidth, 1, UnicodeTable.ArrowDown, attr); // ▼
             }
-            if (ActualHeight >= 3) {
+            if (ActualHeight >= 3)
+            {
                 buffer.FillRectangle(0, 1, ActualWidth, ActualHeight - 2, UnicodeTable.MediumShade, attr); // ▒
                 buffer.FillRectangle(0, getCurrentPage() + 1, ActualWidth, 1, UnicodeTable.BlackSquare, attr); // ■
             }
         }
 
-        private int getPagesCount() {
-            if (Orientation == Orientation.Horizontal) {
+        private int getPagesCount()
+        {
+            if (Orientation == Orientation.Horizontal)
+            {
                 return Math.Max(1, ActualWidth - 2);
             }
             return Math.Max(1, ActualHeight - 2);
@@ -109,8 +136,8 @@ namespace ConsoleFramework.Controls {
         /// <summary>
         /// Returns page which scroller points to
         /// </summary>
-        private int getCurrentPage() {
-            return (int) Math.Truncate(1.0 * Value / MaxValue * (getPagesCount() - 1));
+        private int getCurrentPage()
+        {
+            return (int)Math.Truncate(1.0 * Value / MaxValue * (getPagesCount() - 1));
         }
-    }
-}
+    }

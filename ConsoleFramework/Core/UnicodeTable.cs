@@ -1,6 +1,6 @@
-﻿namespace ConsoleFramework.Core
-{
-    class UnicodeTable {
+namespace ConsoleFramework.Core;
+    class UnicodeTable
+    {
         public const char WindowCloseSymbol = '\u25a0'; // ■
         public const char WindowClosePressedSymbol = '\u263c'; // ☼
 
@@ -31,5 +31,4 @@
         public const char ArrowRight = '\u25ba'; // ►
         public const char ArrowDown = '\u25bc'; // ▼
         public const char ArrowUp = '\u25B2'; // ▲
-    }
-}
+    }

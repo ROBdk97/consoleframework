@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 
-namespace Binding.Validators
-{
+namespace Binding.Validators;
     /// <summary>
     /// Defines the interface that objects that participate binding validation must implement.
     /// </summary>
@@ -10,6 +9,5 @@ namespace Binding.Validators
         /// <summary>
         /// Validates value.
         /// </summary>
-        ValidationResult Validate( Object value );
-    }
-}
+        ValidationResult Validate(Object value);
+    }

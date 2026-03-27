@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 
-namespace Binding.Adapters
-{
+namespace Binding.Adapters;
     /// <summary>
     /// Adapter allows use third-party objects (that don't implement INotifyPropertyChange directly)
     /// in data binding scenarios.
@@ -19,8 +18,8 @@ namespace Binding.Adapters
         /// </summary>
         /// <param name="targetProperty"></param>
         /// <returns></returns>
-        Type GetTargetPropertyClazz( String targetProperty );
-       
+        Type GetTargetPropertyClazz(String targetProperty);
+
         /// <summary>
         /// Sets value of target property. You should implement this method if you will use
         /// binding in source-to-target flow (BindingMode.OneTime, BindingMode.OneWay, BindingMode.TwoWay).
@@ -29,7 +28,7 @@ namespace Binding.Adapters
         /// <param name="target">Target object</param>
         /// <param name="targetProperty">Property name</param>
         /// <param name="value">Value to be set</param>
-        void SetValue( Object target, String targetProperty, Object value );
+        void SetValue(Object target, String targetProperty, Object value);
 
         /// <summary>
         /// Gets the value of target property. You should implement this method if you will use
@@ -66,5 +65,4 @@ namespace Binding.Adapters
         /// You cannot return BindingMode.Default from this method.
         /// </summary>
         BindingMode DefaultMode { get; }
-    }
-}
+    }

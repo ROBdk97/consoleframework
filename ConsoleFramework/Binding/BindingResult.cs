@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 
-namespace Binding
-{
+namespace Binding;
     /// <summary>
     /// Represents result of one synchronization operation from Target to Source.
     /// If hasConversionError is true, message will represent conversion error message.
@@ -28,5 +27,4 @@ namespace Binding
             this.message = message;
         }
     }
-
-}
+

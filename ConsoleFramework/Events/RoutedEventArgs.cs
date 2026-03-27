@@ -1,38 +1,18 @@
 using System;
 
-namespace ConsoleFramework.Events {
+namespace ConsoleFramework.Events;
 
-    public delegate void RoutedEventHandler(object sender, RoutedEventArgs e);
+public delegate void RoutedEventHandler(object sender, RoutedEventArgs e);
 
-    public class RoutedEventArgs : EventArgs {
-        private bool handled;
-        private readonly object source;
-        private readonly RoutedEvent routedEvent;
+public class RoutedEventArgs : EventArgs
+{
+    public bool Handled { get; set; }
+    public object Source { get; }
+    public RoutedEvent RoutedEvent { get; }
 
-        public bool Handled {
-            get {
-                return handled;
-            }
-            set {
-                handled = value;
-            }
-        }
-
-        public object Source {
-            get {
-                return source;
-            }
-        }
-
-        public RoutedEvent RoutedEvent {
-            get {
-                return routedEvent;
-            }
-        }
-
-        public RoutedEventArgs (object source, RoutedEvent routedEvent) {
-            this.source = source;
-            this.routedEvent = routedEvent;
-        }
+    public RoutedEventArgs(object source, RoutedEvent routedEvent)
+    {
+        Source = source;
+        RoutedEvent = routedEvent;
     }
 }

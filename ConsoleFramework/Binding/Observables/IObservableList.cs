@@ -1,40 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Binding.Observables {
+namespace Binding.Observables;
 
-    /// <summary>
-    /// Marks the IList or IList&lt;T&gt; with notifications support.
-    /// It is not derived from IList and IList&lt;T&gt; to allow
-    /// to create both generic and nongeneric implementations.
-    /// </summary>
-    public interface IObservableList
+/// <summary>
+/// Marks IList / IList&lt;T&gt; with notifications support.
+/// Not derived from IList/IList&lt;T&gt; to allow both generic and non-generic implementations.
+/// </summary>
+public interface IObservableList
+{
+    event ListChangedHandler ListChanged;
+}
+
+public delegate void ListChangedHandler(object sender, ListChangedEventArgs args);
+
+public enum ListChangedEventType { ItemsInserted, ItemsRemoved, ItemReplaced }
+
+public class ListChangedEventArgs : EventArgs
+{
+    public ListChangedEventType Type { get; }
+    public int Index { get; }
+    public int Count { get; }
+    public List<object> RemovedItems { get; }
+
+    public ListChangedEventArgs(ListChangedEventType type, int index, int count, List<object> removedItems)
     {
-        event ListChangedHandler ListChanged;
+        Type = type;
+        Index = index;
+        Count = count;
+        RemovedItems = removedItems;
     }
-
-    public delegate void ListChangedHandler(object sender, ListChangedEventArgs args);
-
-    public enum ListChangedEventType
-    {
-        ItemsInserted,
-        ItemsRemoved,
-        ItemReplaced
-    }
-
-    public class ListChangedEventArgs : EventArgs
-    {
-        public ListChangedEventArgs(ListChangedEventType type, int index, int count, List<Object> removedItems) {
-            this.Type = type;
-            this.Index = index;
-            this.Count = count;
-            this.RemovedItems = removedItems;
-        }
-
-        public readonly ListChangedEventType Type;
-        public readonly int Index;
-        public readonly int Count;
-        public readonly List<Object> RemovedItems;
-    }
-    
 }

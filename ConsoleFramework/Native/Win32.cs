@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ConsoleFramework.Native
-{
+namespace ConsoleFramework.Native;
     /// <summary>
     /// Interop code for Win32 environment.
     /// </summary>
-    public static class Win32 {
+    public static class Win32
+    {
         public static uint INFINITE = 0xFFFFFFFF;
 
         [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
@@ -18,21 +18,21 @@ namespace ConsoleFramework.Native
         /// restores before exit.
         /// </summary>
         [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern bool GetConsoleMode( IntPtr hConsoleHandle, [Out] out uint mode );
+        public static extern bool GetConsoleMode(IntPtr hConsoleHandle, [Out] out uint mode);
 
         /// <summary>
         /// It is used to set ENABLE_WINDOW_INPUT flag, which enables the events
         /// about console screen buffer resize.
         /// </summary>
         [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern bool SetConsoleMode( IntPtr hConsoleHandle, uint mode );
+        public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
 
         [DllImport("kernel32.dll")]
         public static extern bool GetConsoleScreenBufferInfo(IntPtr hConsoleOutput,
             out CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo);
 
         [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
-        public static extern IntPtr GetStdHandle([MarshalAs(UnmanagedType.I4)]StdHandleType nStdHandle);
+        public static extern IntPtr GetStdHandle([MarshalAs(UnmanagedType.I4)] StdHandleType nStdHandle);
 
         [DllImport("kernel32.dll", ExactSpelling = true)]
         public static extern uint WaitForMultipleObjects(uint nCount,
@@ -61,7 +61,8 @@ namespace ConsoleFramework.Native
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleCursorInfo(IntPtr hConsoleOutput, [In] ref CONSOLE_CURSOR_INFO lpConsoleCursorInfo);
 
-        public static string GetLastErrorMessage() {
+        public static string GetLastErrorMessage()
+        {
             StringBuilder strLastErrorMessage = new StringBuilder(255);
             int ret2 = Marshal.GetLastWin32Error();
             const int dwFlags = 4096;
@@ -83,12 +84,13 @@ namespace ConsoleFramework.Native
 
         public const UInt32 WM_SYSCOMMAND = 0x0112;
 
-        public static readonly IntPtr SC_MAXIMIZE = new IntPtr( 0xF030 );
+        public static readonly IntPtr SC_MAXIMIZE = new IntPtr(0xF030);
 
-        public static readonly IntPtr SC_RESTORE = new IntPtr( 0xF120 );
+        public static readonly IntPtr SC_RESTORE = new IntPtr(0xF120);
     }
 
-    public enum StdHandleType {
+    public enum StdHandleType
+    {
         STD_INPUT_HANDLE = -10,
         STD_OUTPUT_HANDLE = -11,
         STD_ERROR_HANDLE = -12
@@ -116,7 +118,8 @@ namespace ConsoleFramework.Native
         [FieldOffset(2)] //2 bytes seems to work properly
         public Attr Attributes;
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return string.Format("CHAR_INFO : '{0}' ({1})", AsciiChar, Attributes);
         }
     }
@@ -125,7 +128,8 @@ namespace ConsoleFramework.Native
     /// CHAR_ATTRIBUTES native structure.
     /// </summary>
     [Flags]
-    public enum Attr : ushort {
+    public enum Attr : ushort
+    {
         NO_ATTRIBUTES = 0x0000,
         /// <summary>
         /// Text color contains blue.
@@ -206,7 +210,8 @@ namespace ConsoleFramework.Native
         public FOCUS_EVENT_RECORD FocusEvent;
     };
 
-    public enum EventType : ushort {
+    public enum EventType : ushort
+    {
         FOCUS_EVENT = 0x0010,
         KEY_EVENT = 0x0001,
         MENU_EVENT = 0x0008,
@@ -234,7 +239,8 @@ namespace ConsoleFramework.Native
     }
 
     [Flags]
-    public enum ControlKeyState {
+    public enum ControlKeyState
+    {
         CAPSLOCK_ON = 0x0080,
         ENHANCED_KEY = 0x0100,
         LEFT_ALT_PRESSED = 0x0002,
@@ -260,7 +266,8 @@ namespace ConsoleFramework.Native
     }
 
     [Flags]
-    public enum MOUSE_BUTTON_STATE {
+    public enum MOUSE_BUTTON_STATE
+    {
         FROM_LEFT_1ST_BUTTON_PRESSED = 0x0001,
         FROM_LEFT_2ND_BUTTON_PRESSED = 0x0004,
         FROM_LEFT_3RD_BUTTON_PRESSED = 0x0008,
@@ -269,7 +276,8 @@ namespace ConsoleFramework.Native
     }
 
     [Flags]
-    public enum MouseEventFlags {
+    public enum MouseEventFlags
+    {
         PRESSED_OR_RELEASED = 0x0000,
         DOUBLE_CLICK = 0x0002,
         MOUSE_HWHEELED = 0x0008,
@@ -320,7 +328,8 @@ namespace ConsoleFramework.Native
         public short Right;
         public short Bottom;
 
-        public SMALL_RECT(short left, short top, short right, short bottom) {
+        public SMALL_RECT(short left, short top, short right, short bottom)
+        {
             Left = left;
             Top = top;
             Right = right;
@@ -544,5 +553,4 @@ namespace ConsoleFramework.Native
         Noname = 0xFC,
         PA1 = 0xFD,
         OEMClear = 0xFE
-    }
-}
+    }

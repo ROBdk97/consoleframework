@@ -1,21 +1,22 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Binding;
 using Binding.Observables;
 using Xunit;
 
-namespace TestProject1.Binding
-{
+namespace TestProject1.Binding;
     public class CollectionRebindTest
     {
         class TargetClass
         {
-            public TargetClass() {
+            public TargetClass()
+            {
                 Items = new List<string>();
             }
 
-            public List<String> Items {
+            public List<String> Items
+            {
                 get;
                 set;
             }
@@ -23,11 +24,13 @@ namespace TestProject1.Binding
 
         class SourceClass : INotifyPropertyChanged
         {
-            public SourceClass() {
+            public SourceClass()
+            {
                 SourceItems = new ObservableList(new List<String>());
                 // Rebind collection after first change
                 // This first change should not affect target list
-                SourceItems.ListChanged += (sender, args) => {
+                SourceItems.ListChanged += (sender, args) =>
+                {
                     SourceItems = new ObservableList(new List<String>());
                     raisePropertyChanged("SourceItems");
                 };
@@ -37,14 +40,16 @@ namespace TestProject1.Binding
 
             public event PropertyChangedEventHandler PropertyChanged;
 
-            protected virtual void raisePropertyChanged(string propertyName) {
+            protected virtual void raisePropertyChanged(string propertyName)
+            {
                 PropertyChangedEventHandler handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
         [Fact]
-        public void TestListRebind() {
+        public void TestListRebind()
+        {
             SourceClass source = new SourceClass();
             TargetClass target = new TargetClass();
             BindingBase binding = new BindingBase(target, "Items", source, "SourceItems", BindingMode.OneWay);
@@ -57,5 +62,4 @@ namespace TestProject1.Binding
             source.SourceItems.Remove("1");
             Assert.True(target.Items.Count == 0);
         }
-    }
-}
+    }

@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 
-namespace Binding.Converters
-{
+namespace Binding.Converters;
     /// <summary>
     /// Provides value conversion logic from first class to second and back.
     /// </summary>
@@ -27,5 +26,4 @@ namespace Binding.Converters
         /// </summary>
         ConversionResult ConvertBack(Object second);
     }
-
-}
+

@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 
-namespace Binding.Converters
-{
+namespace Binding.Converters;
     /// <summary>
     /// Represents value conversion result.
     /// </summary>
@@ -11,15 +10,18 @@ namespace Binding.Converters
         private readonly bool success;
         private readonly String failReason;
 
-        public object Value {
+        public object Value
+        {
             get { return value; }
         }
 
-        public bool Success {
+        public bool Success
+        {
             get { return success; }
         }
 
-        public string FailReason {
+        public string FailReason
+        {
             get { return failReason; }
         }
 
@@ -35,5 +37,4 @@ namespace Binding.Converters
             this.failReason = failReason;
         }
     }
-
-}
+

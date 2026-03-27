@@ -1,9 +1,8 @@
-﻿using ConsoleFramework.Controls;
+using ConsoleFramework.Controls;
 using ConsoleFramework.Core;
 using Xunit;
 
-namespace Tests
-{
+namespace Tests;
     public class LayoutClipTests
     {
         [Theory]
@@ -32,7 +31,8 @@ namespace Tests
             HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment,
             int expectedX, int expectedY)
         {
-            Control control = new Control {
+            Control control = new Control
+            {
                 HorizontalAlignment = horizontalAlignment,
                 VerticalAlignment = verticalAlignment
             };
@@ -42,11 +42,14 @@ namespace Tests
         }
 
         [Fact]
-        public void TestApplyMaxConstraints() {
-            Control control = new Control {
+        public void TestApplyMaxConstraints()
+        {
+            Control control = new Control
+            {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 MaxWidth = 3,
-                layoutInfo = new LayoutInfo {
+                layoutInfo = new LayoutInfo
+                {
                     renderSize = new Size(10, 1)
                 }
             };
@@ -55,5 +58,4 @@ namespace Tests
             // visualLayoutClip: a rect starting from (0, 0) and with size of (MaxWidth, MaxHeight)
             Assert.Equal(new Rect(0, 0, 3, 1), layoutClip);
         }
-    }
-}
+    }
