@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Binding.Converters;
+namespace ConsoleFramework.Binding.Converters;
 
 /// <summary>
-/// Converter between String and Integer.
+/// Converter between string and Integer.
 /// </summary>
 public class StringToIntegerConverter : IBindingConverter
 {

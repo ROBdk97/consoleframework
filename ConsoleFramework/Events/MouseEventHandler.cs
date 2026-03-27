@@ -1,0 +1,4 @@
+namespace ConsoleFramework.Events
+{
+    public delegate void MouseEventHandler(object sender, MouseEventArgs e);
+}

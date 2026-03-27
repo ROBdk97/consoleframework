@@ -8,7 +8,7 @@ namespace Tests;
         [Fact]
         public void TestConverter()
         {
-            KeyGestureConverter converter = new KeyGestureConverter();
+            KeyGestureConverter converter = new();
 
             KeyGesture gesture = (KeyGesture)converter.ConvertFrom("CTRL+COMMA");
             Assert.Equal(VirtualKeys.OEMComma, gesture.Key);
@@ -31,7 +31,7 @@ namespace Tests;
         [Fact]
         public void TestMatch()
         {
-            KeyGestureConverter converter = new KeyGestureConverter();
+            KeyGestureConverter converter = new();
 
             KeyGesture gesture = (KeyGesture)converter.ConvertFrom("CTRL+COMMA");
             //            Assert.IsFalse(gesture.Matches(new KEY_EVENT_RECORD() {

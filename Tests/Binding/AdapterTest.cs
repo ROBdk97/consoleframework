@@ -1,10 +1,10 @@
+using ConsoleFramework.Binding;
+using ConsoleFramework.Binding.Adapters;
 using System;
 using System.ComponentModel;
-using Binding;
-using Binding.Adapters;
 using Xunit;
 
-namespace TestProject1.Binding;
+namespace Tests.Binding;
     /// <summary>
     /// Sample to show how write adapter for class that doesn't implement
     /// INotifyPropertyChanged interface.
@@ -13,14 +13,14 @@ namespace TestProject1.Binding;
     {
         class TargetClass
         {
-            private String s;
-            public void SetTargetStr(String str)
+            private string s;
+            public void SetTargetStr(string str)
             {
                 s = str;
                 raiseSChanged();
             }
 
-            public String GetTargetStr()
+            public string GetTargetStr()
             {
                 return s;
             }
@@ -29,15 +29,14 @@ namespace TestProject1.Binding;
 
             protected virtual void raiseSChanged()
             {
-                EventHandler handler = SChanged;
-                if (handler != null) handler(this, EventArgs.Empty);
-            }
+            SChanged?.Invoke(this, EventArgs.Empty);
+        }
         }
 
         class SourceClass : INotifyPropertyChanged
         {
             private string str;
-            public String Str
+            public string Str
             {
                 get { return str; }
                 set
@@ -45,7 +44,7 @@ namespace TestProject1.Binding;
                     if (str != value)
                     {
                         str = value;
-                        raisePropertyChanged("Str");
+                        raisePropertyChanged(nameof(Str));
                     }
                 }
             }
@@ -54,13 +53,12 @@ namespace TestProject1.Binding;
 
             protected virtual void raisePropertyChanged(string propertyName)
             {
-                PropertyChangedEventHandler handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         }
 
         class MyAdapter : IBindingAdapter
-        {
+    {
             public Type TargetType
             {
                 get { return typeof(TargetClass); }
@@ -68,7 +66,7 @@ namespace TestProject1.Binding;
 
             public Type GetTargetPropertyClazz(string targetProperty)
             {
-                if ("S" == targetProperty) return typeof(String);
+                if ("S" == targetProperty) return typeof(string);
                 throw new InvalidOperationException("Unsupported property");
             }
 
@@ -115,11 +113,13 @@ namespace TestProject1.Binding;
         [Fact]
         public void TestMethod1()
         {
-            SourceClass source = new SourceClass();
-            TargetClass target = new TargetClass();
-            BindingBase binding = new BindingBase(target, "S", source, "Str");
-            binding.Adapter = new MyAdapter();
-            binding.Bind();
+            SourceClass source = new();
+            TargetClass target = new();
+        BindingBase binding = new(target, "S", source, "Str")
+        {
+            Adapter = new MyAdapter()
+        };
+        binding.Bind();
             source.Str = "123";
             Assert.True(target.GetTargetStr() == "123");
             target.SetTargetStr("456");

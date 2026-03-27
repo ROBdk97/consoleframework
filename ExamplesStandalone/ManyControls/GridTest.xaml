@@ -1,8 +1,8 @@
-﻿<Window Name="GridWindow" Title="Очень длинное название окна"
+﻿<Window Name="GridWindow" Title="Very long window name"
         xmlns:x="http://consoleframework.org/xaml.xsd"
         xmlns="clr-namespace:ConsoleFramework.Controls;assembly=ConsoleFramework"
         MinWidth="10" MinHeight="10"
-        ActiveBorderColors="DarkBlue on Gray">
+        ActiveBorderColors="White on DarkBlue">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="15"></ColumnDefinition>

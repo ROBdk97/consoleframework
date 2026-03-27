@@ -1,7 +1,6 @@
-﻿using System;
-using ConsoleFramework.Core;
-using ConsoleFramework.Native;
+﻿using ConsoleFramework.Core;
 using ConsoleFramework.Rendering;
+using System;
 
 namespace ConsoleFramework.Controls;
 
@@ -17,7 +16,7 @@ public class ProgressBar : Control
         {
             if (percent == value) return;
             percent = value;
-            RaisePropertyChanged("Percent");
+            RaisePropertyChanged(nameof(Percent));
         }
     }
 

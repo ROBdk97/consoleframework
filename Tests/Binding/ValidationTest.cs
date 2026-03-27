@@ -1,14 +1,14 @@
+using ConsoleFramework.Binding;
 using System;
 using System.ComponentModel;
-using Binding;
 using Xunit;
 
-namespace TestProject1.Binding;
+namespace Tests.Binding;
     public class ValidationTest
     {
         class TargetClass : INotifyPropertyChanged
         {
-            public String TargetStr
+            public string TargetStr
             {
                 get { return targetStr; }
                 set
@@ -16,7 +16,7 @@ namespace TestProject1.Binding;
                     if (targetStr != value)
                     {
                         targetStr = value;
-                        raisePropertyChanged("TargetStr");
+                        raisePropertyChanged(nameof(TargetStr));
                     }
                 }
             }
@@ -27,9 +27,8 @@ namespace TestProject1.Binding;
 
             protected virtual void raisePropertyChanged(string propertyName)
             {
-                PropertyChangedEventHandler handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         }
 
         class SourceClass : INotifyPropertyChanged
@@ -42,7 +41,7 @@ namespace TestProject1.Binding;
                     if (value != sourceInt)
                     {
                         sourceInt = value;
-                        raisePropertyChanged("SourceInt");
+                        raisePropertyChanged(nameof(SourceInt));
                     }
                 }
             }
@@ -53,18 +52,17 @@ namespace TestProject1.Binding;
 
             protected virtual void raisePropertyChanged(string propertyName)
             {
-                PropertyChangedEventHandler handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         }
 
         [Fact]
         public void TestMethod1()
         {
-            SourceClass source = new SourceClass();
-            TargetClass target = new TargetClass();
-            BindingBase binding = new BindingBase(target, "TargetStr", source, "SourceInt");
-            BindingResult lastResult = null;
+            SourceClass source = new();
+            TargetClass target = new();
+        BindingBase binding = new(target, "TargetStr", source, "SourceInt");
+        BindingResult lastResult = null;
             binding.OnBinding += result =>
             {
                 lastResult = result;

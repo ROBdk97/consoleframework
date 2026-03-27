@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ConsoleFramework.Controls;
+using System;
 using System.Collections.Generic;
-using ConsoleFramework.Controls;
 
 namespace ConsoleFramework.Core;
 
@@ -49,7 +49,7 @@ public class VisualTreeHelper
 
     public static bool IsConnectedToRoot(Control control)
     {
-        if (control is null) throw new ArgumentNullException(nameof(control));
+        ArgumentNullException.ThrowIfNull(control);
         var root = ConsoleApplication.Instance.RootControl;
         var current = control;
         while (current is not null)

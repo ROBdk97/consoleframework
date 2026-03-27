@@ -1,6 +1,6 @@
-﻿using System;
-using ConsoleFramework.Events;
+﻿using ConsoleFramework.Events;
 using ConsoleFramework.Native;
+using System;
 
 namespace ConsoleFramework.Controls;
 
@@ -121,8 +121,7 @@ public abstract class ButtonBase : Control, ICommandSource
         set
         {
             if (command == value) return;
-            if (command is not null)
-                command.CanExecuteChanged -= OnCommandCanExecuteChanged;
+            command?.CanExecuteChanged -= OnCommandCanExecuteChanged;
             command = value;
             command.CanExecuteChanged += OnCommandCanExecuteChanged;
             RefreshCanExecute();
