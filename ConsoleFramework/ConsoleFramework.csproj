@@ -4,7 +4,6 @@
     <DebugType>portable</DebugType>
     <AssemblyName>ConsoleFramework</AssemblyName>
     <PackageId>Elwood.ConsoleFramework</PackageId>
-    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -16,13 +15,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.0.3</Version>
     <PackageProjectUrl>https://github.com/elw00d/consoleframework</PackageProjectUrl>
-    <PackageIconUrl>http://elw00d.github.io/consoleframework/favicon.png</PackageIconUrl>
     <Authors />
-    <TargetFrameworks>netstandard2.0;netstandard2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
   </ItemGroup>
 </Project>

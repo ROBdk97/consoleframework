@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using Xaml;
 using Xunit;
 
-namespace Tests.Xaml
-{
+namespace Tests.Xaml;
     public class MarkupExtensionsTest
     {
         public class TestExtension : IMarkupExtension
@@ -55,7 +54,8 @@ namespace Tests.Xaml
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 "{}Just a string{{}}");
             // should be thrown syntax error: markup extension name is empty
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
                 parser.ProcessMarkupExtension(null);
             });
         }
@@ -65,7 +65,7 @@ namespace Tests.Xaml
         {
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 @"{xm:TestExtension Arg1, Arg2, Property3=\=\{\}\\sdf}");
-            String result = (String) parser.ProcessMarkupExtension(null);
+            String result = (String)parser.ProcessMarkupExtension(null);
             Assert.Equal(result, @"Arg1_Arg2_={}\sdf");
         }
 
@@ -74,7 +74,7 @@ namespace Tests.Xaml
         {
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 @"{xm:TestExtension Arg1, {TestExtension Property1=1}, Property3=\=\{\}\\sdf}");
-            String result = (String) parser.ProcessMarkupExtension(null);
+            String result = (String)parser.ProcessMarkupExtension(null);
             Assert.Equal(result, @"Arg1_1___={}\sdf");
         }
 
@@ -83,7 +83,7 @@ namespace Tests.Xaml
         {
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 @"{xm:TestExtension Arg1, Property3=\=\{\}\\sdf, Property2={TestExtension Property1=1}}");
-            String result = (String) parser.ProcessMarkupExtension(null);
+            String result = (String)parser.ProcessMarkupExtension(null);
             Assert.Equal(result, @"Arg1_1___={}\sdf");
         }
 
@@ -92,7 +92,8 @@ namespace Tests.Xaml
         {
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(), "{ }");
             // should be thrown syntax error: markup extension name is empty
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
                 parser.ProcessMarkupExtension(null);
             });
         }
@@ -103,7 +104,8 @@ namespace Tests.Xaml
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 "{TestExtension* }");
             // should be thrown syntax error: whitespace expected after name
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
                 parser.ProcessMarkupExtension(null);
             });
         }
@@ -114,7 +116,8 @@ namespace Tests.Xaml
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 "{TestExtension Property1=1, CtorArg }");
             // should be thrown syntax error: constructor argument cannot be after property assignment
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
                 parser.ProcessMarkupExtension(null);
             });
         }
@@ -125,7 +128,8 @@ namespace Tests.Xaml
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 "{TestExtension CtorArg, Property1=1 } ");
             // should be thrown syntax error: unexpected characters
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
                 parser.ProcessMarkupExtension(null);
             });
         }
@@ -136,9 +140,9 @@ namespace Tests.Xaml
             MarkupExtensionsParser parser = new MarkupExtensionsParser(new TestResolver(),
                 "{TestExtension CtorArg, Property1=1,}");
             // should be thrown syntax error: member name or string expected
-            Assert.Throws<InvalidOperationException>(() => {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
                 parser.ProcessMarkupExtension(null);
             });
         }
-    }
-}
+    }

@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Binding;
 using Binding.Observables;
 using Xunit;
 
-namespace TestProject1.Binding
-{
+namespace TestProject1.Binding;
     public class CollectionsTest
     {
         class TargetClass
@@ -66,5 +65,4 @@ namespace TestProject1.Binding
             source.SourceItems.Remove("1");
             Assert.True(target.Items.Count == 0);
         }
-    }
-}
+    }

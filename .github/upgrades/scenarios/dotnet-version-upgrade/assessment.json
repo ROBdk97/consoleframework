@@ -1,0 +1,420 @@
+{
+  "settings": {
+    "components": {
+      "code": true,
+      "binaries": false
+    },
+    "targetId": "net10.0",
+    "targetDisplayName": ".NETCoreApp,Version=v10.0"
+  },
+  "analysisStartTime": "2026-03-27T08:41:58.4249619Z",
+  "analysisEndTime": "2026-03-27T08:42:00.1125514Z",
+  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
+  "stats": {
+    "summary": {
+      "projects": 4,
+      "issues": 3,
+      "incidents": 9,
+      "effort": 9
+    },
+    "charts": {
+      "severity": {
+        "Mandatory": 5,
+        "Optional": 0,
+        "Potential": 4,
+        "Information": 0
+      },
+      "category": {
+        "NuGet": 1,
+        "Project": 4,
+        "Api": 4
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "ConsoleFramework\\ConsoleFramework.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 6,
+      "properties": {
+        "appName": "ConsoleFramework",
+        "projectKind": "ClassLibrary",
+        "frameworks": [
+          "netstandard2.0",
+          "netstandard2.1",
+          "netcoreapp3.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 85,
+        "numberOfCodeFiles": 85,
+        "linesTotal": 16414,
+        "linesOfCode": 16414,
+        "totalApiScanned": 11419,
+        "minLinesOfCodeToChange": 4,
+        "maxLinesOfCodeToChange": 4
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "a096330c-8875-46f1-be22-a85181777bd5",
+          "ruleId": "NuGet.0003",
+          "projectPath": "ConsoleFramework\\ConsoleFramework.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "System.Threading.Thread, 4.3.0\n\nRecommendation:\n\nPackage functionality included with new framework reference",
+              "protected": "System.Threading.Thread, 4.3.0\n\nRecommendation:\n\nPackage functionality included with new framework reference"
+            },
+            "kind": "File",
+            "path": "ConsoleFramework\\ConsoleFramework.csproj",
+            "snippet": "System.Threading.Thread, 4.3.0\n\nRecommendation:\n\nPackage functionality included with new framework reference",
+            "protectedSnippet": "System.Threading.Thread, 4.3.0\n\nRecommendation:\n\nPackage functionality included with new framework reference",
+            "label": "System.Threading.Thread 4.3.0",
+            "properties": {
+              "PackageId": "System.Threading.Thread",
+              "PackageVersion": "4.3.0",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "6676e80d-404d-4bc0-9011-746a5015f8a1",
+          "ruleId": "Project.0002",
+          "projectPath": "ConsoleFramework\\ConsoleFramework.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current target framework: netstandard2.0;netstandard2.1;netcoreapp3.0\nRecommended target framework: netstandard2.0;netstandard2.1;netcoreapp3.0;net10.0",
+              "protected": "Current target framework: netstandard2.0;netstandard2.1;netcoreapp3.0\nRecommended target framework: netstandard2.0;netstandard2.1;netcoreapp3.0;net10.0"
+            },
+            "kind": "File",
+            "path": "ConsoleFramework\\ConsoleFramework.csproj",
+            "snippet": "Current target framework: netstandard2.0;netstandard2.1;netcoreapp3.0\nRecommended target framework: netstandard2.0;netstandard2.1;netcoreapp3.0;net10.0",
+            "protectedSnippet": "Current target framework: netstandard2.0;netstandard2.1;netcoreapp3.0\nRecommended target framework: netstandard2.0;netstandard2.1;netcoreapp3.0;net10.0",
+            "properties": {
+              "CurrentTargetFramework": "netstandard2.0;netstandard2.1;netcoreapp3.0",
+              "RecommendedTargetFramework": "netstandard2.0;netstandard2.1;netcoreapp3.0;net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "0a2f2d05-f495-4090-aaa0-42e9b886db87",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ConsoleFramework\\ConsoleFramework.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "timer = new Timer( state =\u003E {\r\n                ConsoleApplication.Instance.RunOnUiThread( ( ) =\u003E {\r\n                    if (autoRepeatTimerRunning) {\r\n                        eventsQueue.Enqueue( new MouseButtonEventArgs(\r\n                            lastMousePressEventArgs.Source,\r\n                            Control.MouseDownEvent,\r\n                            lastMousePosition,\r\n                            lastMousePressEventArgs.LeftButton,\r\n                            lastMousePressEventArgs.MiddleButton,\r\n                            lastMousePressEventArgs.RightButton,\r\n                            MouseButton.Left,\r\n                            1,\r\n                            true\r\n                        ) );\r\n                    }\r\n                } );\r\n                // todo : make this constants configurable\r\n            }, null, TimeSpan.FromMilliseconds( 300 ), TimeSpan.FromMilliseconds(100) );",
+              "protected": "M:System.TimeSpan.FromMilliseconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "ConsoleFramework\\Events\\EventManager.cs",
+            "snippet": "timer = new Timer( state =\u003E {\r\n                ConsoleApplication.Instance.RunOnUiThread( ( ) =\u003E {\r\n                    if (autoRepeatTimerRunning) {\r\n                        eventsQueue.Enqueue( new MouseButtonEventArgs(\r\n                            lastMousePressEventArgs.Source,\r\n                            Control.MouseDownEvent,\r\n                            lastMousePosition,\r\n                            lastMousePressEventArgs.LeftButton,\r\n                            lastMousePressEventArgs.MiddleButton,\r\n                            lastMousePressEventArgs.RightButton,\r\n                            MouseButton.Left,\r\n                            1,\r\n                            true\r\n                        ) );\r\n                    }\r\n                } );\r\n                // todo : make this constants configurable\r\n            }, null, TimeSpan.FromMilliseconds( 300 ), TimeSpan.FromMilliseconds(100) );",
+            "protectedSnippet": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "label": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 199,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "bc6a76ff-e53c-41a5-a0ab-a69cdf2aacb8",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ConsoleFramework\\ConsoleFramework.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "timer = new Timer( state =\u003E {\r\n                ConsoleApplication.Instance.RunOnUiThread( ( ) =\u003E {\r\n                    if (autoRepeatTimerRunning) {\r\n                        eventsQueue.Enqueue( new MouseButtonEventArgs(\r\n                            lastMousePressEventArgs.Source,\r\n                            Control.MouseDownEvent,\r\n                            lastMousePosition,\r\n                            lastMousePressEventArgs.LeftButton,\r\n                            lastMousePressEventArgs.MiddleButton,\r\n                            lastMousePressEventArgs.RightButton,\r\n                            MouseButton.Left,\r\n                            1,\r\n                            true\r\n                        ) );\r\n                    }\r\n                } );\r\n                // todo : make this constants configurable\r\n            }, null, TimeSpan.FromMilliseconds( 300 ), TimeSpan.FromMilliseconds(100) );",
+              "protected": "M:System.TimeSpan.FromMilliseconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "ConsoleFramework\\Events\\EventManager.cs",
+            "snippet": "timer = new Timer( state =\u003E {\r\n                ConsoleApplication.Instance.RunOnUiThread( ( ) =\u003E {\r\n                    if (autoRepeatTimerRunning) {\r\n                        eventsQueue.Enqueue( new MouseButtonEventArgs(\r\n                            lastMousePressEventArgs.Source,\r\n                            Control.MouseDownEvent,\r\n                            lastMousePosition,\r\n                            lastMousePressEventArgs.LeftButton,\r\n                            lastMousePressEventArgs.MiddleButton,\r\n                            lastMousePressEventArgs.RightButton,\r\n                            MouseButton.Left,\r\n                            1,\r\n                            true\r\n                        ) );\r\n                    }\r\n                } );\r\n                // todo : make this constants configurable\r\n            }, null, TimeSpan.FromMilliseconds( 300 ), TimeSpan.FromMilliseconds(100) );",
+            "protectedSnippet": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "label": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 199,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "4808254e-95b3-4706-b142-a339e314e420",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ConsoleFramework\\ConsoleFramework.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "ConsoleApplication.Instance.Post( ( ) =\u003E {\r\n                    pressedUsingKeyboard = false;\r\n                    Invalidate(  );\r\n                }, TimeSpan.FromMilliseconds( 300 ) );",
+              "protected": "M:System.TimeSpan.FromMilliseconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "ConsoleFramework\\Controls\\ButtonBase.cs",
+            "snippet": "ConsoleApplication.Instance.Post( ( ) =\u003E {\r\n                    pressedUsingKeyboard = false;\r\n                    Invalidate(  );\r\n                }, TimeSpan.FromMilliseconds( 300 ) );",
+            "protectedSnippet": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "label": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 73,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "d930d3b5-6fe4-49f7-912b-125e27838706",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ConsoleFramework\\ConsoleFramework.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Timer timer = new Timer( state =\u003E {\r\n                    this.Post( action );\r\n                    lock ( timersLock ) {\r\n                        activeTimers.Remove( array[ 0 ] );\r\n                    }\r\n                }, null, delay, TimeSpan.FromMilliseconds( -1 ) );",
+              "protected": "M:System.TimeSpan.FromMilliseconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "ConsoleFramework\\ConsoleApplication.cs",
+            "snippet": "Timer timer = new Timer( state =\u003E {\r\n                    this.Post( action );\r\n                    lock ( timersLock ) {\r\n                        activeTimers.Remove( array[ 0 ] );\r\n                    }\r\n                }, null, delay, TimeSpan.FromMilliseconds( -1 ) );",
+            "protectedSnippet": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "label": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 1012,
+            "column": 16
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "ExamplesStandalone\\ManyControls\\ManyControls.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "properties": {
+        "appName": "ManyControls",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "netcoreapp3.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 2,
+        "numberOfCodeFiles": 1,
+        "linesTotal": 253,
+        "linesOfCode": 233,
+        "totalApiScanned": 91,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "97961b34-d16f-47d3-8e65-e1d974ee9dbf",
+          "ruleId": "Project.0002",
+          "projectPath": "ExamplesStandalone\\ManyControls\\ManyControls.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+              "protected": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0"
+            },
+            "kind": "File",
+            "path": "ExamplesStandalone\\ManyControls\\ManyControls.csproj",
+            "snippet": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+            "protectedSnippet": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "netcoreapp3.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "Tests\\Tests.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "properties": {
+        "appName": "Tests",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "netcoreapp3.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 23,
+        "numberOfCodeFiles": 16,
+        "linesTotal": 7191,
+        "linesOfCode": 1392,
+        "totalApiScanned": 728,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "12149f30-9048-4ab4-9db4-48bfffb2667f",
+          "ruleId": "Project.0002",
+          "projectPath": "Tests\\Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+              "protected": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0"
+            },
+            "kind": "File",
+            "path": "Tests\\Tests.csproj",
+            "snippet": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+            "protectedSnippet": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "netcoreapp3.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "ExamplesStandalone\\TextEditor\\TextEditor.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "properties": {
+        "appName": "TextEditor",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "netcoreapp3.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 2,
+        "numberOfCodeFiles": 1,
+        "linesTotal": 53,
+        "linesOfCode": 16,
+        "totalApiScanned": 3,
+        "minLinesOfCodeToChange": 0,
+        "maxLinesOfCodeToChange": 0
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "82b3fb52-8670-42ed-b578-5573292873c2",
+          "ruleId": "Project.0002",
+          "projectPath": "ExamplesStandalone\\TextEditor\\TextEditor.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+              "protected": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0"
+            },
+            "kind": "File",
+            "path": "ExamplesStandalone\\TextEditor\\TextEditor.csproj",
+            "snippet": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+            "protectedSnippet": "Current target framework: netcoreapp3.0\nRecommended target framework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "netcoreapp3.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        }
+      ],
+      "features": []
+    }
+  ],
+  "rules": {
+    "NuGet.0003": {
+      "id": "NuGet.0003",
+      "isFeature": false,
+      "description": "NuGet package functionality is included with framework reference.\n\nPackage needs to be removed.",
+      "label": "NuGet package functionality is included with framework reference",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262609",
+          "isCustom": false
+        }
+      ]
+    },
+    "Project.0002": {
+      "id": "Project.0002",
+      "isFeature": false,
+      "description": "Project\u0027s target framework(s) needs to be changed to the new target framework that you selected for this upgrade.\n\nDuring upgrade target framework will be adjusted to corresponding platform when applicable. In some cases project would result in multiple target frameworks after the upgrade if it was using features that now have their own platforms in modern .NET frameworks (windows, iOS, Android etc).",
+      "label": "Project\u0027s target framework(s) needs to be changed",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Overview of porting from .NET Framework to .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
+          "isCustom": false
+        },
+        {
+          "title": ".NET project SDKs",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
+          "isCustom": false
+        }
+      ]
+    },
+    "Api.0002": {
+      "id": "Api.0002",
+      "isFeature": false,
+      "description": "API is source incompatible for selected .NET version: requires code changes to compile successfully when targeting a new version, such as removing obsolete APIs or changing method signatures.",
+      "label": "Source incompatible for selected .NET version",
+      "severity": "Potential",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Breaking changes in .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262679",
+          "isCustom": false
+        }
+      ]
+    }
+  }
+}

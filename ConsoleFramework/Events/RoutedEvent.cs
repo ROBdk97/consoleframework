@@ -1,156 +1,59 @@
 ﻿using System;
 
-namespace ConsoleFramework.Events
+namespace ConsoleFramework.Events;
+
+/// <summary>Routing strategy for an event.</summary>
+public enum RoutingStrategy
 {
-    /// <summary>
-    /// Тип маршрутизации события.
-    /// </summary>
-    public enum RoutingStrategy {
-        /// <summary>
-        /// Событие передаётся всем подписчикам, от корневого элемента управления к источнику.
-        /// </summary>
-        Tunnel,
-        /// <summary>
-        /// Событие передаётся всем подписчикам, от источника до корневого элемента управления.
-        /// </summary>
-        Bubble,
-        /// <summary>
-        /// Событие будет передано только тем подписчикам, которые подписаны на
-        /// источник события.
-        /// </summary>
-        Direct
+    /// <summary>Event travels from root to source.</summary>
+    Tunnel,
+    /// <summary>Event travels from source to root.</summary>
+    Bubble,
+    /// <summary>Event is delivered only to direct subscribers on the source.</summary>
+    Direct
+}
+
+/// <summary>Key for internal usage in routed event management maps.</summary>
+public sealed class RoutedEventKey : IEquatable<RoutedEventKey>
+{
+    private readonly string name;
+    private readonly Type ownerType;
+
+    public string Name => name;
+    public Type OwnerType => ownerType;
+
+    public RoutedEventKey(string name, Type ownerType)
+    {
+        this.name = name;
+        this.ownerType = ownerType;
     }
 
-    /// <summary>
-    /// Key for internal usage in routed event management maps.
-    /// </summary>
-    public sealed class RoutedEventKey : IEquatable<RoutedEventKey> {
-        private readonly string name;
-        private readonly Type ownerType;
+    public bool Equals(RoutedEventKey? other) =>
+        other is not null && Equals(other.name, name) && Equals(other.ownerType, ownerType);
 
-        public string Name {
-            get {
-                return name;
-            }
-        }
+    public override bool Equals(object? obj) =>
+        obj is RoutedEventKey key && Equals(key);
 
-        public Type OwnerType {
-            get {
-                return ownerType;
-            }
-        }
+    public override int GetHashCode() => HashCode.Combine(name, ownerType);
 
-        public RoutedEventKey(string name, Type ownerType) {
-            this.name = name;
-            this.ownerType = ownerType;
-        }
+    public static bool operator ==(RoutedEventKey? left, RoutedEventKey? right) => Equals(left, right);
+    public static bool operator !=(RoutedEventKey? left, RoutedEventKey? right) => !Equals(left, right);
+}
 
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(RoutedEventKey other) {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(other.name, name) && Equals(other.ownerType, ownerType);
-        }
+/// <summary>Represents an event that supports routing through the visual tree.</summary>
+public sealed class RoutedEvent
+{
+    public Type HandlerType { get; }
+    public string Name { get; }
+    public Type OwnerType { get; }
+    public RoutingStrategy RoutingStrategy { get; }
+    public RoutedEventKey Key => new(Name, OwnerType);
 
-        /// <summary>
-        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
-        /// </summary>
-        /// <returns>
-        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
-        /// </returns>
-        /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>. </param><filterpriority>2</filterpriority>
-        public override bool Equals(object obj) {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (RoutedEventKey)) return false;
-            return Equals((RoutedEventKey) obj);
-        }
-
-        /// <summary>
-        /// Serves as a hash function for a particular type. 
-        /// </summary>
-        /// <returns>
-        /// A hash code for the current <see cref="T:System.Object"/>.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        public override int GetHashCode() {
-            unchecked {
-                return ((name != null ? name.GetHashCode() : 0)*397) ^ (ownerType != null ? ownerType.GetHashCode() : 0);
-            }
-        }
-
-        public static bool operator ==(RoutedEventKey left, RoutedEventKey right) {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(RoutedEventKey left, RoutedEventKey right) {
-            return !Equals(left, right);
-        }
-    }
-
-    /// <summary>
-    /// Represents event that supports routing through visual tree.
-    /// </summary>
-    public sealed class RoutedEvent {
-        private readonly Type handlerType;
-        private readonly string name;
-        private readonly Type ownerType;
-        private readonly RoutingStrategy routingStrategy;
-
-        public RoutedEvent(Type handlerType, string name, Type ownerType, RoutingStrategy routingStrategy) {
-            this.handlerType = handlerType;
-            this.name = name;
-            this.ownerType = ownerType;
-            this.routingStrategy = routingStrategy;
-        }
-
-        /// <summary>
-        /// Тип делегата - обработчика события.
-        /// </summary>
-        public Type HandlerType {
-            get {
-                return handlerType;
-            }
-        }
-
-        /// <summary>
-        /// Имя события - должно быть уникальным в рамках указанного <see cref="OwnerType"/>.
-        /// </summary>
-        public string Name {
-            get {
-                return name;
-            }
-        }
-
-        /// <summary>
-        /// Тип владельца события.
-        /// </summary>
-        public Type OwnerType {
-            get {
-                return ownerType;
-            }
-        }
-
-        /// <summary>
-        /// Стратегия маршрутизации события.
-        /// </summary>
-        public RoutingStrategy RoutingStrategy {
-            get {
-                return routingStrategy;
-            }
-        }
-
-        public RoutedEventKey Key {
-            get {
-                // note : mb cache this
-                return new RoutedEventKey(name, ownerType);
-            }
-        }
+    public RoutedEvent(Type handlerType, string name, Type ownerType, RoutingStrategy routingStrategy)
+    {
+        HandlerType = handlerType;
+        Name = name;
+        OwnerType = ownerType;
+        RoutingStrategy = routingStrategy;
     }
 }

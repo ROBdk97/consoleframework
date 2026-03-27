@@ -3,81 +3,73 @@ using ConsoleFramework.Events;
 using ConsoleFramework.Native;
 using ConsoleFramework.Rendering;
 
-namespace ConsoleFramework.Controls
+namespace ConsoleFramework.Controls;
+
+public class RadioGroup : Panel
 {
-    public class RadioGroup : Panel
+    private int? selectedItemIndex;
+    public int? SelectedItemIndex
     {
-        private int? selectedItemIndex;
-        public int? SelectedItemIndex
+        get => selectedItemIndex;
+        set
         {
-            get { return selectedItemIndex; }
-            set {
-                if (selectedItemIndex != value) {
-                    selectedItemIndex = value;
-                    RaisePropertyChanged("SelectedItemIndex");
-                    RaisePropertyChanged("SelectedItem");
-                }
-            }
-        }
-
-        public RadioButton SelectedItem
-        {
-            get { return selectedItemIndex.HasValue ? (RadioButton) ((Control) this).Children[selectedItemIndex.Value] : null; }
-        }
-
-        public RadioGroup() {
-            Children.ControlAdded += onControlAdded;
-            Children.ControlRemoved -= onControlRemoved;
-        }
-
-        private void onControlRemoved(Control control) {
-            if (!(control is RadioButton)) return;
-            var radioButton = (RadioButton)control;
-            radioButton.OnClick -= radioButton_OnClick;
-        }
-
-        private void onControlAdded(Control control) {
-            if (!(control is RadioButton)) return;
-            var radioButton = (RadioButton) control;
-            radioButton.OnClick += radioButton_OnClick;
-            int index = ((Control) this).Children.IndexOf(radioButton);
-            radioButton.Checked = selectedItemIndex != null && (selectedItemIndex == index);
-        }
-
-        private void radioButton_OnClick(object sender, RoutedEventArgs args) {
-            foreach (var child in Children) {
-                if (child is RadioButton && child != sender) {
-                    ((RadioButton) child).Checked = false;
-                }
-            }
-            ((RadioButton) sender).Checked = true;
-            int index = ((Control) this).Children.IndexOf((Control) sender);
-            SelectedItemIndex = index;
+            if (selectedItemIndex == value) return;
+            selectedItemIndex = value;
+            RaisePropertyChanged("SelectedItemIndex");
+            RaisePropertyChanged("SelectedItem");
         }
     }
 
-    public class RadioButton : CheckBox
+    public RadioButton? SelectedItem =>
+        selectedItemIndex.HasValue ? (RadioButton)((Control)this).Children[selectedItemIndex.Value] : null;
+
+    public RadioGroup()
     {
-        public override void Render(RenderingBuffer buffer)
+        Children.ControlAdded += OnControlAdded;
+        Children.ControlRemoved -= OnControlRemoved;
+    }
+
+    private void OnControlRemoved(Control control)
+    {
+        if (control is not RadioButton radioButton) return;
+        radioButton.OnClick -= RadioButton_OnClick;
+    }
+
+    private void OnControlAdded(Control control)
+    {
+        if (control is not RadioButton radioButton) return;
+        radioButton.OnClick += RadioButton_OnClick;
+        int index = ((Control)this).Children.IndexOf(radioButton);
+        radioButton.Checked = selectedItemIndex is not null && selectedItemIndex == index;
+    }
+
+    private void RadioButton_OnClick(object sender, RoutedEventArgs args)
+    {
+        foreach (var child in Children)
         {
-            Attr captionAttrs;
-            if (HasFocus)
-                captionAttrs = Colors.Blend(Color.White, Color.DarkGreen);
-            else
-                captionAttrs = Colors.Blend(Color.Black, Color.DarkGreen);
-
-            Attr buttonAttrs = captionAttrs;
-            //            if ( pressed )
-            //                buttonAttrs = Colors.Blend(Color.Black, Color.DarkGreen);
-
-            buffer.SetOpacityRect(0, 0, ActualWidth, ActualHeight, 3);
-
-            buffer.SetPixel(0, 0, pressed ? '<' : '(', buttonAttrs);
-            buffer.SetPixel(1, 0, Checked ? 'X' : ' ', buttonAttrs);
-            buffer.SetPixel(2, 0, pressed ? '>' : ')', buttonAttrs);
-            buffer.SetPixel(3, 0, ' ', buttonAttrs);
-            if (null != Caption)
-                RenderString(Caption, buffer, 4, 0, ActualWidth - 4, captionAttrs);
+            if (child is RadioButton rb && child != sender)
+                rb.Checked = false;
         }
+        ((RadioButton)sender).Checked = true;
+        SelectedItemIndex = ((Control)this).Children.IndexOf((Control)sender);
+    }
+}
+
+public class RadioButton : CheckBox
+{
+    public override void Render(RenderingBuffer buffer)
+    {
+        var captionAttrs = HasFocus
+            ? Colors.Blend(Color.White, Color.DarkGreen)
+            : Colors.Blend(Color.Black, Color.DarkGreen);
+
+        buffer.SetOpacityRect(0, 0, ActualWidth, ActualHeight, 3);
+        buffer.SetPixel(0, 0, pressed ? '<' : '(', captionAttrs);
+        buffer.SetPixel(1, 0, Checked ? 'X' : ' ', captionAttrs);
+        buffer.SetPixel(2, 0, pressed ? '>' : ')', captionAttrs);
+        buffer.SetPixel(3, 0, ' ', captionAttrs);
+
+        if (Caption is not null)
+            RenderString(Caption, buffer, 4, 0, ActualWidth - 4, captionAttrs);
     }
 }

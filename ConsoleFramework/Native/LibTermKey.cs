@@ -1,19 +1,20 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ConsoleFramework.Native
-{
+namespace ConsoleFramework.Native;
     /// <summary>
     /// Interop code for LibTermKey linux library.
     /// LibTermKey is used for handling keyboard and mouse input.
     /// </summary>
     public static class LibTermKey
     {
-        [DllImport( "libtermkey.so" )]
-        public static extern IntPtr termkey_new( int fd, TermKeyFlag flags );
-        
-        public static TermKeyResult termkey_getkey(IntPtr termKey, ref TermKeyKey key) {
-            if (IntPtr.Size == 4) {
+        [DllImport("libtermkey.so")]
+        public static extern IntPtr termkey_new(int fd, TermKeyFlag flags);
+
+        public static TermKeyResult termkey_getkey(IntPtr termKey, ref TermKeyKey key)
+        {
+            if (IntPtr.Size == 4)
+            {
                 TermKeyKey32 temp = new TermKeyKey32();
                 TermKeyResult result = termkey_getkey32(termKey, ref temp);
                 key.type = temp.type;
@@ -27,7 +28,9 @@ namespace ConsoleFramework.Native
                 key.utf8_5 = temp.utf8_5;
                 key.utf8_6 = temp.utf8_6;
                 return result;
-            } else {
+            }
+            else
+            {
                 TermKeyKey64 temp = new TermKeyKey64();
                 TermKeyResult result = termkey_getkey64(termKey, ref temp);
                 key.type = temp.type;
@@ -43,15 +46,17 @@ namespace ConsoleFramework.Native
                 return result;
             }
         }
-        
-        [DllImport( "libtermkey.so", EntryPoint="termkey_getkey" )]
-        private static extern TermKeyResult termkey_getkey32( IntPtr termKey, ref TermKeyKey32 key );
-        
-        [DllImport( "libtermkey.so", EntryPoint="termkey_getkey" )]
-        private static extern TermKeyResult termkey_getkey64( IntPtr termKey, ref TermKeyKey64 key );
 
-        public static TermKeyResult termkey_getkey_force(IntPtr termKey, ref TermKeyKey key) {
-            if (IntPtr.Size == 4) {
+        [DllImport("libtermkey.so", EntryPoint = "termkey_getkey")]
+        private static extern TermKeyResult termkey_getkey32(IntPtr termKey, ref TermKeyKey32 key);
+
+        [DllImport("libtermkey.so", EntryPoint = "termkey_getkey")]
+        private static extern TermKeyResult termkey_getkey64(IntPtr termKey, ref TermKeyKey64 key);
+
+        public static TermKeyResult termkey_getkey_force(IntPtr termKey, ref TermKeyKey key)
+        {
+            if (IntPtr.Size == 4)
+            {
                 TermKeyKey32 temp = new TermKeyKey32();
                 TermKeyResult result = termkey_getkey_force32(termKey, ref temp);
                 key.type = temp.type;
@@ -65,7 +70,9 @@ namespace ConsoleFramework.Native
                 key.utf8_5 = temp.utf8_5;
                 key.utf8_6 = temp.utf8_6;
                 return result;
-            } else {
+            }
+            else
+            {
                 TermKeyKey64 temp = new TermKeyKey64();
                 TermKeyResult result = termkey_getkey_force64(termKey, ref temp);
                 key.type = temp.type;
@@ -82,27 +89,29 @@ namespace ConsoleFramework.Native
             }
         }
 
-        [DllImport( "libtermkey.so", EntryPoint="termkey_getkey_force" )]
-        private static extern TermKeyResult termkey_getkey_force32( IntPtr termKey, ref TermKeyKey32 key );
-        
-        [DllImport( "libtermkey.so", EntryPoint="termkey_getkey_force" )]
-        private static extern TermKeyResult termkey_getkey_force64( IntPtr termKey, ref TermKeyKey64 key );
+        [DllImport("libtermkey.so", EntryPoint = "termkey_getkey_force")]
+        private static extern TermKeyResult termkey_getkey_force32(IntPtr termKey, ref TermKeyKey32 key);
 
-        [DllImport( "libtermkey.so" )]
-        public static extern TermKeyResult termkey_advisereadable( IntPtr termKey );
+        [DllImport("libtermkey.so", EntryPoint = "termkey_getkey_force")]
+        private static extern TermKeyResult termkey_getkey_force64(IntPtr termKey, ref TermKeyKey64 key);
 
-        [DllImport( "libtermkey.so" )]
-        public static extern int termkey_get_waittime( IntPtr termkey );
+        [DllImport("libtermkey.so")]
+        public static extern TermKeyResult termkey_advisereadable(IntPtr termKey);
 
-        [DllImport( "libtermkey.so" )]
-        public static extern void termkey_destroy( IntPtr termkey );
-        
+        [DllImport("libtermkey.so")]
+        public static extern int termkey_get_waittime(IntPtr termkey);
+
+        [DllImport("libtermkey.so")]
+        public static extern void termkey_destroy(IntPtr termkey);
+
         public static TermKeyResult termkey_interpret_mouse(IntPtr termKey, ref TermKeyKey key,
                                                                     out TermKeyMouseEvent ev,
                                                                     out int button,
                                                                     out int line,
-                                                                    out int col) {
-            if (IntPtr.Size == 4) {
+                                                                    out int col)
+        {
+            if (IntPtr.Size == 4)
+            {
                 TermKeyKey32 temp = new TermKeyKey32();
                 temp.type = key.type;
                 temp.code = key.code;
@@ -114,9 +123,9 @@ namespace ConsoleFramework.Native
                 temp.utf8_4 = key.utf8_4;
                 temp.utf8_5 = key.utf8_5;
                 temp.utf8_6 = key.utf8_6;
-                
+
                 TermKeyResult result = termkey_interpret_mouse32(termKey, ref temp, out ev, out button, out line, out col);
-                
+
                 key.type = temp.type;
                 key.code = temp.code;
                 key.modifiers = temp.modifiers;
@@ -127,9 +136,11 @@ namespace ConsoleFramework.Native
                 key.utf8_4 = temp.utf8_4;
                 key.utf8_5 = temp.utf8_5;
                 key.utf8_6 = temp.utf8_6;
-                
+
                 return result;
-            } else {
+            }
+            else
+            {
                 TermKeyKey64 temp = new TermKeyKey64();
                 temp.type = key.type;
                 temp.code = key.code;
@@ -141,9 +152,9 @@ namespace ConsoleFramework.Native
                 temp.utf8_4 = key.utf8_4;
                 temp.utf8_5 = key.utf8_5;
                 temp.utf8_6 = key.utf8_6;
-                
+
                 TermKeyResult result = termkey_interpret_mouse64(termKey, ref temp, out ev, out button, out line, out col);
-                
+
                 key.type = temp.type;
                 key.code = temp.code;
                 key.modifiers = temp.modifiers;
@@ -154,24 +165,24 @@ namespace ConsoleFramework.Native
                 key.utf8_4 = temp.utf8_4;
                 key.utf8_5 = temp.utf8_5;
                 key.utf8_6 = temp.utf8_6;
-                
+
                 return result;
             }
         }
-        
-        [DllImport( "libtermkey.so", EntryPoint="termkey_interpret_mouse" )]
-        private static extern TermKeyResult termkey_interpret_mouse32( IntPtr termKey, ref TermKeyKey32 key,
+
+        [DllImport("libtermkey.so", EntryPoint = "termkey_interpret_mouse")]
+        private static extern TermKeyResult termkey_interpret_mouse32(IntPtr termKey, ref TermKeyKey32 key,
                                                                     out TermKeyMouseEvent ev,
                                                                     out int button,
                                                                     out int line,
-                                                                    out int col );
-        
-        [DllImport( "libtermkey.so", EntryPoint="termkey_interpret_mouse" )]
-        private static extern TermKeyResult termkey_interpret_mouse64( IntPtr termKey, ref TermKeyKey64 key,
+                                                                    out int col);
+
+        [DllImport("libtermkey.so", EntryPoint = "termkey_interpret_mouse")]
+        private static extern TermKeyResult termkey_interpret_mouse64(IntPtr termKey, ref TermKeyKey64 key,
                                                                     out TermKeyMouseEvent ev,
                                                                     out int button,
                                                                     out int line,
-                                                                    out int col );
+                                                                    out int col);
     }
 
     [Flags]
@@ -292,63 +303,64 @@ namespace ConsoleFramework.Native
     }
 
     // why sizeof it is 8 ?
-    [StructLayout( LayoutKind.Explicit )]
+    [StructLayout(LayoutKind.Explicit)]
     public struct code
     {
         // NOT long ! actually int
-        [FieldOffset( 0 )] public int codepoint; /* TERMKEY_TYPE_UNICODE */
-        [FieldOffset( 0 )] public int number; /* TERMKEY_TYPE_FUNCTION */
-        [FieldOffset( 0 )] public TermKeySym sym; /* TERMKEY_TYPE_KEYSYM */
-        [FieldOffset( 0 )] public byte mouse0; /* TERMKEY_TYPE_MOUSE (char[4]) */
-        [FieldOffset( 1 )] public byte mouse1;
-        [FieldOffset( 2 )] public byte mouse2;
-        [FieldOffset( 3 )] public byte mouse3;
+        [FieldOffset(0)] public int codepoint; /* TERMKEY_TYPE_UNICODE */
+        [FieldOffset(0)] public int number; /* TERMKEY_TYPE_FUNCTION */
+        [FieldOffset(0)] public TermKeySym sym; /* TERMKEY_TYPE_KEYSYM */
+        [FieldOffset(0)] public byte mouse0; /* TERMKEY_TYPE_MOUSE (char[4]) */
+        [FieldOffset(1)] public byte mouse1;
+        [FieldOffset(2)] public byte mouse2;
+        [FieldOffset(3)] public byte mouse3;
     }
-    
+
     // use this layout if using 32-bit version of libtermkey.so
-    
-    [StructLayout( LayoutKind.Explicit )]
+
+    [StructLayout(LayoutKind.Explicit)]
     public struct TermKeyKey32
     {
-        [FieldOffset( 0 )] public TermKeyType type;
+        [FieldOffset(0)] public TermKeyType type;
         // sizeof(code) must be 4, but if use a Sequential layout
         // it will be 8, so we have to explicitly specify the offsets
-        [FieldOffset( 4 )] public code code;
-        [FieldOffset( 8 )] public int modifiers;
+        [FieldOffset(4)] public code code;
+        [FieldOffset(8)] public int modifiers;
 
         /* char[7] = Any Unicode character can be UTF-8 encoded in no more than 6 bytes, plus terminating NUL */
-        [FieldOffset( 12 + 0 )] public byte utf8_0;
-        [FieldOffset( 12 + 1 )] public byte utf8_1;
-        [FieldOffset( 12 + 2 )] public byte utf8_2;
-        [FieldOffset( 12 + 3 )] public byte utf8_3;
-        [FieldOffset( 12 + 4 )] public byte utf8_4;
-        [FieldOffset( 12 + 5 )] public byte utf8_5;
-        [FieldOffset( 12 + 6 )] public byte utf8_6;
-    }    
-    
-    
+        [FieldOffset(12 + 0)] public byte utf8_0;
+        [FieldOffset(12 + 1)] public byte utf8_1;
+        [FieldOffset(12 + 2)] public byte utf8_2;
+        [FieldOffset(12 + 3)] public byte utf8_3;
+        [FieldOffset(12 + 4)] public byte utf8_4;
+        [FieldOffset(12 + 5)] public byte utf8_5;
+        [FieldOffset(12 + 6)] public byte utf8_6;
+    }
+
+
     // this layout is actual for 64-bit version of libtermkey.so
-    
-    [StructLayout( LayoutKind.Explicit )]
+
+    [StructLayout(LayoutKind.Explicit)]
     public struct TermKeyKey64
     {
-        [FieldOffset( 0 )] public TermKeyType type;
+        [FieldOffset(0)] public TermKeyType type;
         // sizeof(code) must be 4, but if use a Sequential layout
         // it will be 8, so we have to explicitly specify the offsets
-        [FieldOffset( 8 )] public code code;
-        [FieldOffset( 16 )] public int modifiers;
+        [FieldOffset(8)] public code code;
+        [FieldOffset(16)] public int modifiers;
 
         /* char[7] = Any Unicode character can be UTF-8 encoded in no more than 6 bytes, plus terminating NUL */
-        [FieldOffset( 20 + 0 )] public byte utf8_0;
-        [FieldOffset( 20 + 1 )] public byte utf8_1;
-        [FieldOffset( 20 + 2 )] public byte utf8_2;
-        [FieldOffset( 20 + 3 )] public byte utf8_3;
-        [FieldOffset( 20 + 4 )] public byte utf8_4;
-        [FieldOffset( 20 + 5 )] public byte utf8_5;
-        [FieldOffset( 20 + 6 )] public byte utf8_6;
+        [FieldOffset(20 + 0)] public byte utf8_0;
+        [FieldOffset(20 + 1)] public byte utf8_1;
+        [FieldOffset(20 + 2)] public byte utf8_2;
+        [FieldOffset(20 + 3)] public byte utf8_3;
+        [FieldOffset(20 + 4)] public byte utf8_4;
+        [FieldOffset(20 + 5)] public byte utf8_5;
+        [FieldOffset(20 + 6)] public byte utf8_6;
     }
-    
-    public struct TermKeyKey {
+
+    public struct TermKeyKey
+    {
         public TermKeyType type;
         public code code;
         public int modifiers;
@@ -358,6 +370,5 @@ namespace ConsoleFramework.Native
         public byte utf8_3;
         public byte utf8_4;
         public byte utf8_5;
-        public byte utf8_6;        
-    }
-}
+        public byte utf8_6;
+    }
